@@ -61,7 +61,11 @@
     <div class="main-content" ref="mainContentRef">
     
     <!-- 技术分类轮播 -->
-    <section class="tech-carousel-section">
+    <section 
+      class="tech-carousel-section"
+      @mouseenter="stopAutoPlay"
+      @mouseleave="startAutoPlay"
+    >
       <div class="section-container">
         <h2 class="carousel-title">海量视频教程、技术博客，助你快速提升技能</h2>
         
@@ -299,6 +303,7 @@ const categories = [
 const currentIndex = ref(0)
 const selectorTrackRef = ref<HTMLElement | null>(null)
 const selectorOffset = ref(0)
+let autoPlayTimer: number | null = null
 
 // 当前分类
 const currentCategory = computed(() => categories[currentIndex.value]!)
@@ -334,6 +339,40 @@ function calculateSelectorOffset() {
 // 切换到指定分类
 function slideTo(index: number) {
   currentIndex.value = index
+  // 重置自动轮播定时器
+  resetAutoPlay()
+}
+
+// 自动轮播到下一个
+function autoPlayNext() {
+  const nextIndex = currentIndex.value === categories.length - 1 ? 0 : currentIndex.value + 1
+  currentIndex.value = nextIndex
+}
+
+// 启动自动轮播
+function startAutoPlay() {
+  // 清除已存在的定时器
+  if (autoPlayTimer) {
+    clearInterval(autoPlayTimer)
+  }
+  // 每5秒切换一次
+  autoPlayTimer = window.setInterval(() => {
+    autoPlayNext()
+  }, 5000)
+}
+
+// 停止自动轮播
+function stopAutoPlay() {
+  if (autoPlayTimer) {
+    clearInterval(autoPlayTimer)
+    autoPlayTimer = null
+  }
+}
+
+// 重置自动轮播（用户手动操作后重新开始计时）
+function resetAutoPlay() {
+  stopAutoPlay()
+  startAutoPlay()
 }
 
 // 点击分类跳转
@@ -417,10 +456,15 @@ onMounted(() => {
   
   // 窗口大小变化时重新计算
   window.addEventListener('resize', calculateSelectorOffset)
+  
+  // 启动自动轮播
+  startAutoPlay()
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', calculateSelectorOffset)
+  // 清除自动轮播定时器
+  stopAutoPlay()
 })
 </script>
 
