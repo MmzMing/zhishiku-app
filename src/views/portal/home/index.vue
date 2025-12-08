@@ -14,12 +14,14 @@
             size="large"
             clearable
             @keyup.enter="handleSearch"
+            :class="{ 'expanded': isSearchFocused || isSearchHovered }"
+            @focus="isSearchFocused = true"
+            @blur="isSearchFocused = false"
+            @mouseenter="isSearchHovered = true"
+            @mouseleave="isSearchHovered = false"
           >
-            <template #append>
-              <el-button type="primary" @click="handleSearch">
-                <el-icon><Search /></el-icon>
-                搜索
-              </el-button>
+            <template #prefix>
+              <el-icon class="search-icon"><Search /></el-icon>
             </template>
           </el-input>
         </div>
@@ -274,6 +276,8 @@ const mainContentRef = ref<HTMLElement | null>(null)
 
 // 状态
 const searchKeyword = ref('')
+const isSearchFocused = ref(false)
+const isSearchHovered = ref(false)
 const recommendVideos = ref<Video[]>([])
 const hotBlogs = ref<Blog[]>([])
 const videosLoading = ref(false)
@@ -545,6 +549,8 @@ onUnmounted(() => {
     margin-bottom: 24px;
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     animation: fadeInUp 0.8s ease-out;
+    width: 500px;
+    margin: 0 auto 24px;
   }
   
   .hero-main-desc {
@@ -559,19 +565,48 @@ onUnmounted(() => {
     max-width: 700px;
     margin: 0 auto 32px;
     animation: fadeInUp 1.2s ease-out 0.4s both;
+    width: fit-content;
     
-    :deep(.el-input-group__append) {
-      background: var(--color-primary);
-      border: none;
+    :deep(.el-input__wrapper) {
+      background: var(--color-bg-primary);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--color-border);
+      border-radius: 30px;
+      transition: all 0.3s ease;
       
-      .el-button {
-        color: #fff;
+      &.is-focus {
+        border-color: var(--color-brand-500);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--color-brand-500) inset;
       }
     }
     
-    :deep(.el-input__wrapper) {
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    :deep(.el-input) {
+      width: 360px;
+      transition: all 0.3s ease;
+      margin: 0 auto;
+    }
+    
+    :deep(.el-input.expanded) {
+      width: 600px;
+    }
+    
+    :deep(.el-input__prefix) {
+      display: flex;
+      align-items: center;
+    }
+    
+    :deep(.search-icon) {
+      color: var(--color-text-tertiary);
+      font-size: 16px;
+      margin-left: 12px;
+    }
+    
+    :deep(.el-input__inner) {
+      &::placeholder {
+        color: var(--color-text-placeholder);
+      }
+      
+      color: var(--color-text-primary);
     }
   }
   
