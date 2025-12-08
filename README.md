@@ -19,31 +19,76 @@
 
 ```
 src/
-├── api/                    # API 接口模块
+├── api/                        # API 接口模块
 │   ├── modules/
-│   │   ├── user.ts         # 用户相关 API
-│   │   ├── video.ts        # 视频相关 API
-│   │   ├── blog.ts         # 博客相关 API
-│   │   ├── admin.ts        # 后台管理 API
-│   │   └── search.ts       # 搜索相关 API
-│   └── index.ts            # API 统一导出
-├── components/             # 公共组件
-├── composables/            # 组合式函数
-├── layouts/                # 布局组件
-│   ├── PortalLayout.vue    # 前台展示布局
-│   ├── AdminLayout.vue     # 后台管理布局
-│   └── DefaultLayout.vue   # 默认布局
-├── router/                 # 路由配置
-├── stores/                 # Pinia 状态管理
-├── styles/                 # 全局样式
-├── types/                  # TypeScript 类型定义
-├── utils/                  # 工具函数
-│   └── request.ts          # Axios 请求封装
-└── views/                  # 页面视图
-    ├── auth/               # 认证页面（登录/注册）
-    ├── portal/             # 前台门户页面
-    ├── admin/              # 后台管理页面
-    └── common/             # 公共页面（404等）
+│   │   ├── admin.ts            # 后台管理 API
+│   │   ├── blog.ts             # 博客相关 API
+│   │   ├── search.ts           # 搜索相关 API
+│   │   ├── user.ts             # 用户相关 API
+│   │   └── video.ts            # 视频相关 API
+│   └── index.ts                # API 统一导出
+├── components/                 # 公共组件
+│   ├── base/
+│   │   └── ThemeToggle.vue     # 主题切换组件
+│   └── HelloWorld.vue
+├── composables/                # 组合式函数
+│   └── useTheme.ts             # 主题管理 Hook
+├── layouts/                    # 布局组件
+│   ├── AdminLayout.vue         # 后台管理布局
+│   ├── DefaultLayout.vue       # 默认布局
+│   └── PortalLayout.vue        # 前台展示布局
+├── mock/                       # Mock 数据
+│   └── index.ts
+├── router/                     # 路由配置
+│   ├── guard.ts                # 路由守卫
+│   └── index.ts                # 路由主配置
+├── stores/                     # Pinia 状态管理
+│   ├── modules/
+│   │   ├── app.ts              # 应用状态
+│   │   └── user.ts             # 用户状态
+│   └── index.ts
+├── styles/                     # 全局样式
+│   ├── theme/
+│   │   └── index.scss          # 主题样式
+│   ├── global.scss             # 全局样式
+│   └── variables.scss          # SCSS 变量
+├── types/                      # TypeScript 类型定义
+│   ├── blog.ts                 # 博客类型
+│   ├── index.ts                # 类型统一导出
+│   ├── user.ts                 # 用户类型
+│   └── video.ts                # 视频类型
+├── utils/                      # 工具函数
+│   ├── colorUtils.ts           # 颜色工具
+│   ├── request.ts              # Axios 请求封装
+│   └── themeUtils.ts           # 主题工具
+├── views/                      # 页面视图
+│   ├── admin/                  # 后台管理页面
+│   │   ├── behavior/           # 用户行为分析
+│   │   ├── blogs/              # 博客管理（列表/编辑/分类/分析）
+│   │   ├── dashboard/          # 控制台
+│   │   ├── departments/        # 部门管理
+│   │   ├── dict/               # 字典管理
+│   │   ├── monitor/            # 系统监控（服务/应用/审计/日志）
+│   │   ├── points/             # 积分管理（规则/流水/商城/排行）
+│   │   ├── roles/              # 角色管理
+│   │   ├── users/              # 用户管理
+│   │   └── videos/             # 视频管理（列表/编辑/分类/审核）
+│   ├── auth/                   # 认证页面
+│   │   ├── login.vue           # 登录
+│   │   └── register.vue        # 注册
+│   ├── common/                 # 公共页面
+│   │   └── 404.vue             # 404 页面
+│   ├── dashboard/              # 用户仪表盘
+│   ├── home/                   # 首页
+│   └── portal/                 # 前台门户页面
+│       ├── blogs/              # 博客（列表/详情）
+│       ├── home/               # 门户首页
+│       ├── search/             # 搜索页
+│       ├── user/               # 个人中心（资料/收藏/历史/积分/设置）
+│       └── videos/             # 视频（列表/详情）
+├── App.vue                     # 根组件
+├── main.ts                     # 入口文件
+└── style.css                   # 基础样式
 ```
 
 ## 功能模块
