@@ -1,40 +1,40 @@
 <template>
   <div class="portal-home">
-    <!-- 英雄区域 -->
-    <section class="hero-section">
-      <div class="hero-container">
-        <div class="hero-content">
-          <h1 class="hero-title">探索知识的海洋</h1>
-          <p class="hero-desc">海量视频教程、技术博客，助你快速提升技能</p>
-          <div class="hero-search">
-            <el-input
-              v-model="searchKeyword"
-              placeholder="搜索你想学习的内容..."
-              size="large"
-              clearable
-              @keyup.enter="handleSearch"
-            >
-              <template #append>
-                <el-button type="primary" @click="handleSearch">
-                  <el-icon><Search /></el-icon>
-                  搜索
-                </el-button>
-              </template>
-            </el-input>
-          </div>
-          <div class="hero-tags">
-            <span>热门搜索：</span>
-            <el-tag 
-              v-for="tag in hotTags" 
-              :key="tag" 
-              class="hot-tag"
-              @click="searchKeyword = tag; handleSearch()"
-            >
-              {{ tag }}
-            </el-tag>
-          </div>
+    <!-- 全屏背景首屏区域 -->
+    <section class="fullscreen-hero" ref="fullscreenHeroRef">
+      <div class="hero-background"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content-wrapper">
+        <h1 class="hero-main-title">探索知识的海洋</h1>
+        <p class="hero-main-desc">海量视频教程、技术博客，助你快速提升技能</p>
+        <div class="hero-main-search">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="搜索你想学习的内容..."
+            size="large"
+            clearable
+            @keyup.enter="handleSearch"
+          >
+            <template #append>
+              <el-button type="primary" @click="handleSearch">
+                <el-icon><Search /></el-icon>
+                搜索
+              </el-button>
+            </template>
+          </el-input>
         </div>
-        <div class="hero-stats">
+        <div class="hero-main-tags">
+          <span>热门搜索：</span>
+          <el-tag 
+            v-for="tag in hotTags" 
+            :key="tag" 
+            class="hot-tag"
+            @click="searchKeyword = tag; handleSearch()"
+          >
+            {{ tag }}
+          </el-tag>
+        </div>
+        <div class="hero-main-stats">
           <div class="stat-item">
             <span class="stat-value">{{ stats.videos }}+</span>
             <span class="stat-label">视频教程</span>
@@ -49,22 +49,83 @@
           </div>
         </div>
       </div>
+      
+      <!-- 向下箭头按钮 -->
+      <div class="scroll-down-arrow" @click="scrollToContent">
+        <el-icon :size="32" class="arrow-icon"><ArrowDown /></el-icon>
+        <span class="arrow-text">向下滚动</span>
+      </div>
     </section>
+
+    <!-- 主内容区域 -->
+    <div class="main-content" ref="mainContentRef">
     
-    <!-- 分类导航 -->
-    <section class="category-section">
+    <!-- 技术分类轮播 -->
+    <section class="tech-carousel-section">
       <div class="section-container">
-        <div class="category-grid">
-          <div 
-            v-for="cat in categories" 
-            :key="cat.id" 
-            class="category-card"
-            @click="$router.push({ path: '/portal/videos', query: { category: cat.id } })"
-          >
-            <div class="category-icon" :style="{ background: cat.color }">
-              <el-icon :size="28"><component :is="cat.icon" /></el-icon>
+        <h2 class="carousel-title">海量视频教程、技术博客，助你快速提升技能</h2>
+        
+        <!-- 三图轮播区域 -->
+        <div class="carousel-wrapper">
+          <div class="carousel-track">
+            <!-- 左侧图片 -->
+            <div 
+              class="carousel-item carousel-item-left" 
+              :style="{ background: getPrevCategory.color }"
+              @click="slideTo(getPrevIndex)"
+            >
+              <div class="carousel-item-content">
+                <el-icon :size="64"><component :is="getPrevCategory.icon" /></el-icon>
+                <span class="carousel-item-name">{{ getPrevCategory.name }}</span>
+              </div>
             </div>
-            <span class="category-name">{{ cat.name }}</span>
+            
+            <!-- 中间图片（当前选中） -->
+            <div 
+              class="carousel-item carousel-item-center" 
+              :style="{ background: currentCategory.color }"
+              @click="handleCategoryClick(currentCategory)"
+            >
+              <div class="carousel-item-content">
+                <el-icon :size="80"><component :is="currentCategory.icon" /></el-icon>
+                <span class="carousel-item-name">{{ currentCategory.name }}</span>
+                <span class="carousel-item-desc">{{ currentCategory.desc }}</span>
+              </div>
+            </div>
+            
+            <!-- 右侧图片 -->
+            <div 
+              class="carousel-item carousel-item-right" 
+              :style="{ background: getNextCategory.color }"
+              @click="slideTo(getNextIndex)"
+            >
+              <div class="carousel-item-content">
+                <el-icon :size="64"><component :is="getNextCategory.icon" /></el-icon>
+                <span class="carousel-item-name">{{ getNextCategory.name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 底部分类选择器 -->
+        <div class="category-selector">
+          <div 
+            class="selector-track" 
+            ref="selectorTrackRef"
+            :style="{ transform: `translateX(${selectorOffset}px)` }"
+          >
+            <div 
+              v-for="(cat, index) in categories" 
+              :key="cat.id" 
+              class="selector-item"
+              :class="{ active: index === currentIndex }"
+              @click="slideTo(index)"
+            >
+              <div class="selector-icon" :style="{ background: index === currentIndex ? cat.color : '' }">
+                <el-icon :size="20"><component :is="cat.icon" /></el-icon>
+              </div>
+              <span class="selector-name">{{ cat.name }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -180,22 +241,28 @@
         </div>
       </div>
     </section>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   Search, VideoPlay, Document, ArrowRight, View, Star, 
   ChatDotRound, Monitor, Notebook, Files, Setting,
-  Trophy, Clock, Headset
+  Trophy, Clock, Headset, DataLine, Connection, Cpu, 
+  Platform, Box, Promotion, Guide, ArrowDown
 } from '@element-plus/icons-vue'
 import { mockService } from '@/mock'
 import type { Video } from '@/types/video'
 import type { Blog } from '@/types/blog'
 
 const router = useRouter()
+
+// Refs
+const fullscreenHeroRef = ref<HTMLElement | null>(null)
+const mainContentRef = ref<HTMLElement | null>(null)
 
 // 状态
 const searchKeyword = ref('')
@@ -214,13 +281,78 @@ const stats = ref({
 // 热门搜索标签
 const hotTags = ['Vue 3', 'React', 'TypeScript', 'Node.js', 'Python']
 
-// 分类
+// 技术分类数据
 const categories = [
-  { id: '1', name: '前端开发', icon: Monitor, color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-  { id: '2', name: '后端开发', icon: Setting, color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
-  { id: '3', name: '数据库', icon: Files, color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
-  { id: '4', name: '运维部署', icon: Notebook, color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
+  { id: '1', name: '前端开发', icon: Monitor, color: 'linear-gradient(135deg, #687eea 0%, #764ba2 100%)', desc: 'Vue/React/Angular 等前端框架教程' },
+  { id: '2', name: '后端开发', icon: Setting, color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', desc: 'Java/Go/Python 等后端技术学习' },
+  { id: '3', name: '数据库', icon: Files, color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', desc: 'MySQL/Redis/MongoDB 数据库实战' },
+  { id: '4', name: '运维部署', icon: Notebook, color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', desc: 'Docker/K8s/CI/CD 自动化运维' },
+  { id: '5', name: '人工智能', icon: Cpu, color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', desc: '机器学习/深度学习/NLP 技术' },
+  { id: '6', name: '大数据', icon: DataLine, color: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', desc: 'Hadoop/Spark/Flink 数据处理' },
+  { id: '7', name: '网络安全', icon: Connection, color: 'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)', desc: '渗透测试/安全攻防/CTF' },
+  { id: '8', name: '移动开发', icon: Platform, color: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)', desc: 'iOS/Android/Flutter 移动应用' },
+  { id: '9', name: '微服务', icon: Box, color: 'linear-gradient(135deg, #c3cfe2 0%, #c3cfe2 100%)', desc: 'SpringCloud/Dubbo 微服务架构' },
+  { id: '10', name: '测试开发', icon: Guide, color: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)', desc: '自动化测试/性能测试/单元测试' },
 ]
+
+// 轮播相关状态
+const currentIndex = ref(0)
+const selectorTrackRef = ref<HTMLElement | null>(null)
+const selectorOffset = ref(0)
+
+// 当前分类
+const currentCategory = computed(() => categories[currentIndex.value]!)
+
+// 上一个分类
+const getPrevIndex = computed(() => {
+  return currentIndex.value === 0 ? categories.length - 1 : currentIndex.value - 1
+})
+const getPrevCategory = computed(() => categories[getPrevIndex.value]!)
+
+// 下一个分类
+const getNextIndex = computed(() => {
+  return currentIndex.value === categories.length - 1 ? 0 : currentIndex.value + 1
+})
+const getNextCategory = computed(() => categories[getNextIndex.value]!)
+
+// 计算选择器偏移量，使当前项居中
+function calculateSelectorOffset() {
+  const track = selectorTrackRef.value
+  if (!track) return
+  
+  const items = track.querySelectorAll('.selector-item')
+  if (items.length === 0) return
+  
+  const containerWidth = track.parentElement?.clientWidth || 0
+  const itemWidth = 140 // 每个选项的宽度
+  const currentItemLeft = currentIndex.value * itemWidth
+  const centerOffset = (containerWidth - itemWidth) / 2
+  
+  selectorOffset.value = centerOffset - currentItemLeft
+}
+
+// 切换到指定分类
+function slideTo(index: number) {
+  currentIndex.value = index
+}
+
+// 点击分类跳转
+function handleCategoryClick(cat: typeof categories[0]) {
+  router.push({ path: '/portal/videos', query: { category: cat.id } })
+}
+
+// 监听当前索引变化，重新计算偏移
+watch(currentIndex, () => {
+  calculateSelectorOffset()
+})
+
+// 向下滚动到主内容区域
+function scrollToContent() {
+  mainContentRef.value?.scrollIntoView({ 
+    behavior: 'smooth',
+    block: 'start'
+  })
+}
 
 // 功能特点
 const features = [
@@ -278,6 +410,17 @@ async function loadData() {
 
 onMounted(() => {
   loadData()
+  // 延迟计算偏移，确保DOM已渲染
+  setTimeout(() => {
+    calculateSelectorOffset()
+  }, 100)
+  
+  // 窗口大小变化时重新计算
+  window.addEventListener('resize', calculateSelectorOffset)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', calculateSelectorOffset)
 })
 </script>
 
@@ -311,33 +454,63 @@ onMounted(() => {
   }
 }
 
-// 英雄区域
-.hero-section {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #764ba2 100%);
-  padding: 80px 24px;
+// 全屏背景首屏区域
+.fullscreen-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   
-  .hero-container {
-    max-width: 1200px;
-    margin: 0 auto;
+  // 背景图片
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background: url('/picture/preview.jpg') center/cover no-repeat;
+    z-index: 0;
+  }
+  
+  // 遮罩层
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
+  
+  // 主内容
+  .hero-content-wrapper {
+    position: relative;
+    z-index: 2;
     text-align: center;
     color: #fff;
+    max-width: 900px;
+    padding: 0 24px;
   }
   
-  .hero-title {
-    font-size: 48px;
+  .hero-main-title {
+    font-size: 56px;
     font-weight: 700;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.8s ease-out;
   }
   
-  .hero-desc {
-    font-size: 18px;
-    opacity: 0.9;
-    margin-bottom: 32px;
+  .hero-main-desc {
+    font-size: 20px;
+    opacity: 0.95;
+    margin-bottom: 48px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 1s ease-out 0.2s both;
   }
   
-  .hero-search {
-    max-width: 600px;
-    margin: 0 auto 24px;
+  .hero-main-search {
+    max-width: 700px;
+    margin: 0 auto 32px;
+    animation: fadeInUp 1.2s ease-out 0.4s both;
     
     :deep(.el-input-group__append) {
       background: var(--color-primary);
@@ -347,91 +520,340 @@ onMounted(() => {
         color: #fff;
       }
     }
+    
+    :deep(.el-input__wrapper) {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
   }
   
-  .hero-tags {
+  .hero-main-tags {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     font-size: 14px;
+    margin-bottom: 56px;
+    animation: fadeInUp 1.4s ease-out 0.6s both;
     
     .hot-tag {
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       color: #fff;
+      backdrop-filter: blur(10px);
       
       &:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.35);
+        transform: translateY(-2px);
       }
     }
   }
   
-  .hero-stats {
+  .hero-main-stats {
     display: flex;
     justify-content: center;
-    gap: 64px;
-    margin-top: 48px;
+    gap: 80px;
+    animation: fadeInUp 1.6s ease-out 0.8s both;
     
     .stat-item {
       text-align: center;
       
       .stat-value {
         display: block;
-        font-size: 36px;
+        font-size: 48px;
         font-weight: 700;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
       
       .stat-label {
-        font-size: 14px;
-        opacity: 0.8;
+        font-size: 16px;
+        opacity: 0.9;
       }
+    }
+  }
+  
+  // 向下箭头按钮
+  .scroll-down-arrow {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #fff;
+    opacity: 0.8;
+    transition: all 0.3s;
+    animation: bounce 2s ease-in-out infinite;
+    
+    &:hover {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-5px);
+    }
+    
+    .arrow-icon {
+      font-size: 32px;
+    }
+    
+    .arrow-text {
+      font-size: 14px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
   }
 }
 
-// 分类区域
-.category-section {
-  padding: 40px 24px;
+// 动画定义
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+// 主内容区域
+.main-content {
   background: var(--color-bg-primary);
+}
+
+// 技术分类轮播区域
+.tech-carousel-section {
+  padding: 60px 24px;
+  background: var(--color-bg-primary);
+  overflow: hidden;
   
-  .category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+  .carousel-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 48px;
   }
   
-  .category-card {
+  // 轮播包裹器
+  .carousel-wrapper {
+    position: relative;
+    height: 380px;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  
+  // 轮播轨道
+  .carousel-track {
+    position: relative;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 12px;
-    padding: 24px;
-    background: var(--color-bg-secondary);
-    border-radius: 12px;
+    height: 100%;
+  }
+  
+  // 轮播项
+  .carousel-item {
+    position: absolute;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+    // 叠加滑屏动效
+    transition: 
+      left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.5s ease,
+      z-index 0s 0.3s;
+    will-change: transform, left, right, opacity;
     
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    .carousel-item-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #fff;
+      text-align: center;
+      padding: 24px;
     }
     
-    .category-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
+    .carousel-item-name {
+      font-size: 24px;
+      font-weight: 600;
+      margin-top: 16px;
+    }
+    
+    .carousel-item-desc {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 10px;
+      max-width: 280px;
+    }
+    
+    // 左侧项 - 更小，有间隔，左侧渐变透明
+    &.carousel-item-left {
+      width: 200px;
+      height: 260px;
+      left: calc(50% - 420px);
+      z-index: 5;
+      opacity: 0.85;
+      transform: scale(0.9);
+      // 左边透明，右边不透明
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 0%);
+      mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 70%);
+      
+      &:hover {
+        opacity: 1;
+        transform: scale(0.92);
+      }
+      
+      .carousel-item-name {
+        font-size: 16px;
+      }
+      
+      .carousel-item-desc {
+        display: none;
+      }
+    }
+    
+    // 中间项（当前项） - 居中放大显示
+    &.carousel-item-center {
+      width: 420px;
+      height: 350px;
+      left: 50%;
+      transform: translateX(-50%) scale(1);
+      z-index: 10;
+      opacity: 1;
+      
+      &:hover {
+        transform: translateX(-50%) scale(1.02);
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+      }
+    }
+    
+    // 右侧项 - 更小，有间隔，右侧渐变透明
+    &.carousel-item-right {
+      width: 200px;
+      height: 260px;
+      right: calc(50% - 420px);
+      z-index: 5;
+      opacity: 0.85;
+      transform: scale(0.9);
+      // 右边透明，左边不透明
+      -webkit-mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 70%);
+      mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 70%);
+      
+      &:hover {
+        opacity: 1;
+        transform: scale(0.92);
+      }
+      
+      .carousel-item-name {
+        font-size: 16px;
+      }
+      
+      .carousel-item-desc {
+        display: none;
+      }
+    }
+  }
+  
+  // 底部分类选择器
+  .category-selector {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 16px 0;
+    
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    
+    &::before {
+      left: 0;
+      background: linear-gradient(to right, var(--color-bg-primary), transparent);
+    }
+    
+    &::after {
+      right: 0;
+      background: linear-gradient(to left, var(--color-bg-primary), transparent);
+    }
+  }
+  
+  .selector-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 8px 0;
+  }
+  
+  .selector-item {
+    flex-shrink: 0;
+    width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: transparent;
+    
+    &:hover {
+      background: var(--color-bg-secondary);
+    }
+    
+    &.active {
+      background: var(--color-bg-secondary);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      
+      .selector-icon {
+        color: #fff;
+      }
+      
+      .selector-name {
+        color: var(--color-text-primary);
+        font-weight: 600;
+      }
+    }
+    
+    .selector-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      color: var(--color-text-tertiary);
+      transition: all 0.3s;
     }
     
-    .category-name {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--color-text-primary);
+    .selector-name {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      transition: all 0.3s;
     }
   }
 }
@@ -716,8 +1138,32 @@ onMounted(() => {
     }
   }
   
-  .category-section .category-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .tech-carousel-section {
+    .carousel-title {
+      font-size: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .carousel-wrapper {
+      height: 300px;
+    }
+    
+    .carousel-item.carousel-item-center {
+      width: 280px;
+      height: 260px;
+    }
+    
+    .carousel-item.carousel-item-left {
+      width: 140px;
+      height: 200px;
+      left: calc(50% - 260px);
+    }
+    
+    .carousel-item.carousel-item-right {
+      width: 140px;
+      height: 200px;
+      right: calc(50% - 260px);
+    }
   }
   
   .video-section .video-grid {
