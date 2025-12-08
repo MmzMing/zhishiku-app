@@ -151,6 +151,48 @@ onMounted(() => {
 
 .search-header {
   margin-bottom: 24px;
+
+  :deep(.el-input__wrapper) {
+    background: var(--surface-0);
+    color: var(--color-text-primary);
+    box-shadow:
+      0 0 0 1px var(--color-border) inset,
+      0 10px 30px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(12px);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+
+    &:hover {
+      box-shadow:
+        0 0 0 1px var(--color-border-dark) inset,
+        0 12px 34px rgba(0, 0, 0, 0.22);
+      transform: translateY(-1px);
+    }
+
+    &.is-focus {
+      box-shadow:
+        0 0 0 1px var(--color-primary) inset,
+        0 14px 38px rgba(0, 0, 0, 0.26);
+    }
+  }
+
+  :deep(.el-input__inner) {
+    color: var(--color-text-primary);
+    caret-color: var(--color-primary);
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+  }
+
+  :deep(.el-input-group__append) {
+    background: var(--color-primary);
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+    .el-button {
+      color: #fff;
+    }
+  }
 }
 
 .search-filter {

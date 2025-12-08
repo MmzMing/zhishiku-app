@@ -63,8 +63,6 @@
     <!-- 技术分类轮播 -->
     <section 
       class="tech-carousel-section"
-      @mouseenter="stopAutoPlay"
-      @mouseleave="startAutoPlay"
     >
       <div class="section-container">
         <h2 class="carousel-title">海量视频教程、技术博客，助你快速提升技能</h2>
@@ -77,6 +75,8 @@
               class="carousel-item carousel-item-left" 
               :style="{ background: getPrevCategory.color }"
               @click="slideTo(getPrevIndex)"
+              @mouseenter="stopAutoPlay"
+              @mouseleave="startAutoPlay"
             >
               <div class="carousel-item-content">
                 <el-icon :size="64"><component :is="getPrevCategory.icon" /></el-icon>
@@ -89,6 +89,8 @@
               class="carousel-item carousel-item-center" 
               :style="{ background: currentCategory.color }"
               @click="handleCategoryClick(currentCategory)"
+              @mouseenter="stopAutoPlay"
+              @mouseleave="startAutoPlay"
             >
               <div class="carousel-item-content">
                 <el-icon :size="80"><component :is="currentCategory.icon" /></el-icon>
@@ -102,6 +104,8 @@
               class="carousel-item carousel-item-right" 
               :style="{ background: getNextCategory.color }"
               @click="slideTo(getNextIndex)"
+              @mouseenter="stopAutoPlay"
+              @mouseleave="startAutoPlay"
             >
               <div class="carousel-item-content">
                 <el-icon :size="64"><component :is="getNextCategory.icon" /></el-icon>
