@@ -1480,7 +1480,7 @@ export function generateThemeVariables(
 - 智能内容推荐算法
 - 渐进式图片加载
 - 服务端渲染(SSR)支持
-
+1
 #### 4.3.2 视频展示页面
 
 **功能设计:**
