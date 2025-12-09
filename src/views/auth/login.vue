@@ -214,13 +214,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { 
   User, Lock, ChatDotRound, Connection, ChatLineRound,
   Key, Iphone, Message, VideoPlay, Document, Trophy, Loading
 } from '@element-plus/icons-vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import type { FormInstance } from 'element-plus'
+import type { FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user'
 import { mockService } from '@/mock'
 import ThemeToggle from '@/components/base/ThemeToggle.vue'
@@ -277,13 +279,70 @@ const phoneValidator = (_rule: unknown, value: string, callback: (error?: Error)
   }
 }
 
+// 正则表达式常量定义
+const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+const SQL_INJECTION_REGEX = /('|"|;|\\|--|\/\*|\*\/|OR\s+1\s*=\s*1)/i
+const XSS_REGEX = /(<|>|javascript:|on\w+\s*=)/i
+const FULL_WIDTH_CHAR_REGEX = /[\uff00-\uffff]/
+
 // 表单验证规则
 const loginRules = computed<FormRules>(() => {
   if (loginType.value === 'account') {
     return {
       username: [
-        { required: true, message: '请输入用户名', trigger: 'blur' },
-        { min: 3, max: 50, message: '用户名长度在 3 到 50 个字符', trigger: 'blur' }
+        { required: true, message: '请输入用户名或邮箱', trigger: 'blur' },
+        { 
+          validator: (rule: any, value: string, callback: (error?: Error) => void) => {
+            if (!value) {
+              // 空值已在required规则中处理，这里直接返回
+              return callback()
+            }
+            
+            // 检查是否为邮箱
+            if (value.includes('@')) {
+              // 邮箱验证 - 使用更健壮的正则表达式
+              if (!EMAIL_REGEX.test(value)) {
+                return callback(new Error('请输入正确的邮箱格式'))
+              }
+            } else {
+              // 自动转换全角字符为半角字符
+              const convertedValue = value.replace(FULL_WIDTH_CHAR_REGEX, (char) => {
+                // 将全角字符转换为半角字符
+                const charCode = char.charCodeAt(0)
+                return String.fromCharCode(charCode - 65248)
+              })
+              
+              // 更新表单值
+              loginForm.username = convertedValue
+              
+              // 用户名验证
+              // 1. 长度限制: 3-20字符
+              if (convertedValue.length < 3 || convertedValue.length > 20) {
+                return callback(new Error('用户名长度需在 3-20 字符之间'))
+              }
+              
+              // 2. 字符限制: 仅允许字母、数字、下划线
+              if (!USERNAME_REGEX.test(convertedValue)) {
+                return callback(new Error('用户名仅支持字母、数字、下划线'))
+              }
+              
+              // 3. 用户名不能以下划线开头或结尾
+              if (convertedValue.startsWith('_') || convertedValue.endsWith('_')) {
+                return callback(new Error('用户名不能以下划线开头或结尾'))
+              }
+              
+              // 4. 安全检查: 禁止SQL注入和XSS攻击字符
+              if (SQL_INJECTION_REGEX.test(convertedValue) || XSS_REGEX.test(convertedValue)) {
+                return callback(new Error('用户名包含非法字符'))
+              }
+            }
+            
+            // 验证通过
+            callback()
+          }, 
+          trigger: 'blur' 
+        }
       ],
       password: [
         { required: true, message: '请输入密码', trigger: 'blur' },
