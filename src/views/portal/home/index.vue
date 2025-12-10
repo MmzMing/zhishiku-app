@@ -71,47 +71,26 @@
         
         <!-- 三图轮播区域 -->
         <div class="carousel-wrapper">
-          <div class="carousel-track">
-            <!-- 左侧图片 -->
+          <div class="carousel-track" ref="carouselTrackRef">
             <div 
-              class="carousel-item carousel-item-left" 
-              :style="{ background: getPrevCategory.color }"
-              @click="slideTo(getPrevIndex)"
+              v-for="(category, index) in carouselCategories"
+              :key="category.id"
+              class="carousel-item"
+              :class="getCarouselItemClass(index)"
+              :style="getCarouselItemStyle(index)"
+              @click="slideToCategory(index)"
               @mouseenter="stopAutoPlay"
               @mouseleave="startAutoPlay"
             >
               <div class="carousel-item-content">
-                <el-icon :size="64"><component :is="getPrevCategory.icon" /></el-icon>
-                <span class="carousel-item-name">{{ getPrevCategory.name }}</span>
-              </div>
-            </div>
-            
-            <!-- 中间图片（当前选中） -->
-            <div 
-              class="carousel-item carousel-item-center" 
-              :style="{ background: currentCategory.color }"
-              @click="handleCategoryClick(currentCategory)"
-              @mouseenter="stopAutoPlay"
-              @mouseleave="startAutoPlay"
-            >
-              <div class="carousel-item-content">
-                <el-icon :size="80"><component :is="currentCategory.icon" /></el-icon>
-                <span class="carousel-item-name">{{ currentCategory.name }}</span>
-                <span class="carousel-item-desc">{{ currentCategory.desc }}</span>
-              </div>
-            </div>
-            
-            <!-- 右侧图片 -->
-            <div 
-              class="carousel-item carousel-item-right" 
-              :style="{ background: getNextCategory.color }"
-              @click="slideTo(getNextIndex)"
-              @mouseenter="stopAutoPlay"
-              @mouseleave="startAutoPlay"
-            >
-              <div class="carousel-item-content">
-                <el-icon :size="64"><component :is="getNextCategory.icon" /></el-icon>
-                <span class="carousel-item-name">{{ getNextCategory.name }}</span>
+                <el-icon :size="getIconSize(index)"><component :is="category.icon" /></el-icon>
+                <span class="carousel-item-name">{{ category.name }}</span>
+                <span 
+                  v-if="index === visibleCenterIndex" 
+                  class="carousel-item-desc"
+                >
+                  {{ category.desc }}
+                </span>
               </div>
             </div>
           </div>
@@ -256,7 +235,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted as onMount, onUnmounted as onUnMount, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   Search, VideoPlay, Document, ArrowRight, View, Star, 
@@ -273,6 +252,7 @@ const router = useRouter()
 // Refs
 const fullscreenHeroRef = ref<HTMLElement | null>(null)
 const mainContentRef = ref<HTMLElement | null>(null)
+const carouselTrackRef = ref<HTMLElement | null>(null)
 
 // 状态
 const searchKeyword = ref('')
@@ -313,20 +293,94 @@ const selectorTrackRef = ref<HTMLElement | null>(null)
 const selectorOffset = ref(0)
 let autoPlayTimer: number | null = null
 
-// 当前分类
-const currentCategory = computed(() => categories[currentIndex.value]!)
+// 3D轮播相关状态
+const visibleCenterIndex = ref(0)
+const totalCategories = categories.length
+const bufferCount = 2 // 缓冲区数量，左右各2个，总共显示5张图片
 
-// 上一个分类
-const getPrevIndex = computed(() => {
-  return currentIndex.value === 0 ? categories.length - 1 : currentIndex.value - 1
-})
-const getPrevCategory = computed(() => categories[getPrevIndex.value]!)
+// 鼠标拖拽相关状态
+const isDragging = ref(false)
+const startX = ref(0)
+const currentX = ref(0)
+const dragThreshold = ref(50) // 拖拽阈值
 
-// 下一个分类
-const getNextIndex = computed(() => {
-  return currentIndex.value === categories.length - 1 ? 0 : currentIndex.value + 1
+// 计算可见的轮播项（包括缓冲区）
+const carouselCategories = computed(() => {
+  const result = []
+  // 添加当前项及其前后几项（形成环形列表）
+  for (let i = -bufferCount; i <= bufferCount; i++) {
+    const index = (currentIndex.value + i + totalCategories) % totalCategories
+    result.push({
+      ...categories[index],
+      originalIndex: index,
+      positionIndex: i
+    })
+  }
+  return result
 })
-const getNextCategory = computed(() => categories[getNextIndex.value]!)
+
+// 获取轮播项的CSS类
+function getCarouselItemClass(index: number) {
+  const positionIndex = index - bufferCount // 转换为相对位置索引 (-2, -1, 0, 1, 2)
+  
+  return {
+    'carousel-item-prev': positionIndex < 0,
+    'carousel-item-next': positionIndex > 0,
+    'carousel-item-active': positionIndex === 0,
+    [`carousel-item-pos-${positionIndex}`]: true
+  }
+}
+
+// 获取轮播项的样式
+function getCarouselItemStyle(index: number) {
+  const item = carouselCategories.value[index]
+  if (!item) return {}
+  const positionIndex = item.positionIndex
+  
+  // 计算3D变换参数，参考u-tools的轮播效果
+  const rotateY = positionIndex * -20 // 每个项绕Y轴旋转一定角度
+  const translateX = positionIndex * 200 // X轴偏移，适应更大的图片
+  const translateZ = Math.abs(positionIndex) * -120 - 60 // Z轴偏移，离中心越远越靠后
+  const scale = 1 - Math.abs(positionIndex) * 0.15 // 缩放，离中心越远越小
+  const opacity = 1 - Math.abs(positionIndex) * 0.3 // 透明度，离中心越远越透明
+  const zIndex = 10 - Math.abs(positionIndex) // 层级，离中心越远越低
+  
+  return {
+    background: item.color,
+    transform: `translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+    opacity: opacity,
+    zIndex: zIndex
+  }
+}
+
+// 获取图标大小
+function getIconSize(index: number) {
+  const item = carouselCategories.value[index]
+  if (!item) return 64
+  const positionIndex = item.positionIndex
+  return positionIndex === 0 ? 80 : 64
+}
+
+// 切换到指定分类
+function slideTo(index: number) {
+  currentIndex.value = index
+  visibleCenterIndex.value = index
+  // 重置自动轮播定时器
+  resetAutoPlay()
+}
+
+// 切换到轮播项中的分类
+function slideToCategory(index: number) {
+  const item = carouselCategories.value[index]
+  if (item) {
+    slideTo(item.originalIndex)
+  }
+}
+
+// 点击分类跳转
+function handleCategoryClick(cat: typeof categories[0]) {
+  router.push({ path: '/portal/videos', query: { category: cat.id } })
+}
 
 // 计算选择器偏移量，使当前项居中
 function calculateSelectorOffset() {
@@ -344,17 +398,11 @@ function calculateSelectorOffset() {
   selectorOffset.value = centerOffset - currentItemLeft
 }
 
-// 切换到指定分类
-function slideTo(index: number) {
-  currentIndex.value = index
-  // 重置自动轮播定时器
-  resetAutoPlay()
-}
-
 // 自动轮播到下一个
 function autoPlayNext() {
   const nextIndex = currentIndex.value === categories.length - 1 ? 0 : currentIndex.value + 1
   currentIndex.value = nextIndex
+  visibleCenterIndex.value = nextIndex
 }
 
 // 启动自动轮播
@@ -383,9 +431,43 @@ function resetAutoPlay() {
   startAutoPlay()
 }
 
-// 点击分类跳转
-function handleCategoryClick(cat: typeof categories[0]) {
-  router.push({ path: '/portal/videos', query: { category: cat.id } })
+// 鼠标按下事件处理
+function handleMouseDown(event: MouseEvent) {
+  isDragging.value = true
+  startX.value = event.clientX
+  currentX.value = event.clientX
+  stopAutoPlay()
+}
+
+// 鼠标移动事件处理
+function handleMouseMove(event: MouseEvent) {
+  if (!isDragging.value) return
+  currentX.value = event.clientX
+}
+
+// 鼠标释放事件处理
+function handleMouseUp() {
+  if (!isDragging.value) return
+  isDragging.value = false
+  
+  // 计算拖拽距离
+  const dragDistance = currentX.value - startX.value
+  
+  // 如果拖拽距离超过阈值，则切换图片
+  if (Math.abs(dragDistance) > dragThreshold.value) {
+    if (dragDistance > 0) {
+      // 向右拖拽，显示前一张
+      const prevIndex = currentIndex.value === 0 ? categories.length - 1 : currentIndex.value - 1
+      slideTo(prevIndex)
+    } else {
+      // 向左拖拽，显示后一张
+      const nextIndex = currentIndex.value === categories.length - 1 ? 0 : currentIndex.value + 1
+      slideTo(nextIndex)
+    }
+  } else {
+    // 拖拽距离不足，恢复自动播放
+    startAutoPlay()
+  }
 }
 
 // 监听当前索引变化，重新计算偏移
@@ -455,7 +537,7 @@ async function loadData() {
   }
 }
 
-onMounted(() => {
+onMount(() => {
   loadData()
   // 延迟计算偏移，确保DOM已渲染
   setTimeout(() => {
@@ -465,14 +547,28 @@ onMounted(() => {
   // 窗口大小变化时重新计算
   window.addEventListener('resize', calculateSelectorOffset)
   
+  // 添加鼠标事件监听器以支持拖拽
+  if (carouselTrackRef.value) {
+    carouselTrackRef.value.addEventListener('mousedown', handleMouseDown)
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+  }
+  
   // 启动自动轮播
   startAutoPlay()
 })
 
-onUnmounted(() => {
+onUnMount(() => {
   window.removeEventListener('resize', calculateSelectorOffset)
   // 清除自动轮播定时器
   stopAutoPlay()
+  
+  // 移除鼠标事件监听器
+  if (carouselTrackRef.value) {
+    carouselTrackRef.value.removeEventListener('mousedown', handleMouseDown)
+    window.removeEventListener('mousemove', handleMouseMove)
+    window.removeEventListener('mouseup', handleMouseUp)
+  }
 })
 </script>
 
@@ -732,9 +828,10 @@ onUnmounted(() => {
   // 轮播包裹器
   .carousel-wrapper {
     position: relative;
-    height: 380px;
+    height: 450px;
     margin-bottom: 40px;
     overflow: hidden;
+    perspective: 1500px; // 增加透视距离，增强3D效果
   }
   
   // 轮播轨道
@@ -744,29 +841,40 @@ onUnmounted(() => {
     justify-content: center;
     align-items: center;
     height: 100%;
+    transform-style: preserve-3d; // 保持3D变换样式
+    cursor: grab;
+  }
+  
+  .carousel-track:active {
+    cursor: grabbing;
   }
   
   // 轮播项
   .carousel-item {
+    width: 320px;
+    height: 360px;
     position: absolute;
     border-radius: 16px;
     cursor: pointer;
     overflow: hidden;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-    // 叠加滑屏动效
+    // 3D轮播动效
     transition: 
-      left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
       transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      opacity 0.5s ease,
+      opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
       z-index 0s 0.3s;
-    will-change: transform, left, right, opacity;
+    will-change: transform, opacity;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none; // 防止拖拽时选中文本
     
     .carousel-item-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      width: 100%;
       height: 100%;
       color: #fff;
       text-align: center;
@@ -780,77 +888,11 @@ onUnmounted(() => {
     }
     
     .carousel-item-desc {
-      font-size: 14px;
+      font-size: 16px;
       opacity: 0.9;
-      margin-top: 10px;
+      margin-top: 16px;
       max-width: 280px;
-    }
-    
-    // 左侧项 - 更小，有间隔，左侧渐变透明
-    &.carousel-item-left {
-      width: 200px;
-      height: 260px;
-      left: calc(50% - 420px);
-      z-index: 5;
-      opacity: 0.85;
-      transform: scale(0.9);
-      // 左边透明，右边不透明
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 0%);
-      mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 70%);
-      
-      &:hover {
-        opacity: 1;
-        transform: scale(0.92);
-      }
-      
-      .carousel-item-name {
-        font-size: 16px;
-      }
-      
-      .carousel-item-desc {
-        display: none;
-      }
-    }
-    
-    // 中间项（当前项） - 居中放大显示
-    &.carousel-item-center {
-      width: 420px;
-      height: 350px;
-      left: 50%;
-      transform: translateX(-50%) scale(1);
-      z-index: 10;
-      opacity: 1;
-      
-      &:hover {
-        transform: translateX(-50%) scale(1.02);
-        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
-      }
-    }
-    
-    // 右侧项 - 更小，有间隔，右侧渐变透明
-    &.carousel-item-right {
-      width: 200px;
-      height: 260px;
-      right: calc(50% - 420px);
-      z-index: 5;
-      opacity: 0.85;
-      transform: scale(0.9);
-      // 右边透明，左边不透明
-      -webkit-mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 70%);
-      mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,1) 70%);
-      
-      &:hover {
-        opacity: 1;
-        transform: scale(0.92);
-      }
-      
-      .carousel-item-name {
-        font-size: 16px;
-      }
-      
-      .carousel-item-desc {
-        display: none;
-      }
+      line-height: 1.5;
     }
   }
   
