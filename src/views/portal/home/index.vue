@@ -364,10 +364,24 @@ function getIconSize(index: number) {
 
 // 切换到指定分类
 function slideTo(index: number) {
+  // 记录之前的索引
+  const previousIndex = currentIndex.value
+  
+  // 更新当前索引和可见中心索引
   currentIndex.value = index
   visibleCenterIndex.value = index
+  
   // 重置自动轮播定时器
   resetAutoPlay()
+  
+  // 判断是否需要更新选择器偏移量
+  // 对于至少5个常驻的处理：当索引小于2或者大于等于总数量-3时，使用特殊的偏移计算
+  const totalCategories = categories.length
+  const needsSpecialOffset = index < 2 || index >= totalCategories - 3
+  
+  // 只有在不需要特殊处理的情况下才调用calculateSelectorOffset
+  // 特殊情况的偏移计算将在calculateSelectorOffset函数内部处理
+  calculateSelectorOffset()
 }
 
 // 切换到轮播项中的分类
@@ -383,7 +397,7 @@ function handleCategoryClick(cat: typeof categories[0]) {
   router.push({ path: '/portal/videos', query: { category: cat.id } })
 }
 
-// 计算选择器偏移量，使当前项居中
+// 计算选择器偏移量，实现至少5个常驻显示的逻辑
 function calculateSelectorOffset() {
   const track = selectorTrackRef.value
   if (!track) return
@@ -392,11 +406,27 @@ function calculateSelectorOffset() {
   if (items.length === 0) return
   
   const containerWidth = track.parentElement?.clientWidth || 0
-  const itemWidth = 140 // 每个选项的宽度
-  const currentItemLeft = currentIndex.value * itemWidth
+  // 响应式项目宽度：在小屏幕上减小宽度
+  const isMobile = window.innerWidth <= 768
+  const itemWidth = isMobile ? 100 : 140 // 移动端100px，桌面端140px
+  const totalCategories = categories.length
   const centerOffset = (containerWidth - itemWidth) / 2
   
-  selectorOffset.value = centerOffset - currentItemLeft
+  // 计算基础偏移量
+  let offset = centerOffset - currentIndex.value * itemWidth
+  
+  // 实现至少5个常驻的逻辑
+  // 当索引小于2时，保持左侧固定位置，不继续向左滑动
+  if (currentIndex.value < 2) {
+    offset = centerOffset - 2 * itemWidth // 保持第2个项目在中心位置
+  }
+  // 当索引大于等于总数量-3时，保持右侧固定位置，不继续向右滑动
+  else if (currentIndex.value >= totalCategories - 3) {
+    offset = centerOffset - (totalCategories - 3) * itemWidth // 保持倒数第3个项目在中心位置
+  }
+  
+  // 设置偏移量
+  selectorOffset.value = offset
 }
 
 // 自动轮播到下一个
@@ -1290,6 +1320,31 @@ onUnMount(() => {
       width: 140px;
       height: 200px;
       right: calc(50% - 260px);
+    }
+    
+    // 移动端分类选择器样式
+    .category-selector {
+      max-width: 100%;
+      padding: 8px 0;
+      
+      &::before,
+      &::after {
+        width: 40px; // 减小渐变遮罩的宽度
+      }
+    }
+    
+    .selector-item {
+      width: 100px; // 减小移动端选项宽度
+      padding: 8px 12px;
+      
+      .selector-icon {
+        width: 28px;
+        height: 28px;
+      }
+      
+      .selector-name {
+        font-size: 12px;
+      }
     }
   }
   
