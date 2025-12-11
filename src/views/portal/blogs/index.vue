@@ -89,7 +89,8 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { View, Star, ChatDotRound } from '@element-plus/icons-vue'
-import { mockService } from '@/mock'
+import { ElMessage } from 'element-plus'
+import { blogApi } from '@/services/api'
 import type { Blog } from '@/types/blog'
 
 const route = useRoute()
@@ -122,15 +123,18 @@ function formatCount(count: number): string {
 async function loadBlogs() {
   loading.value = true
   try {
-    const result = await mockService.getBlogList({
+    // 使用API服务层调用，便于后续切换到真实API
+    const result = await blogApi.getBlogList({
       pageNum: currentPage.value,
       pageSize: pageSize.value,
       categoryId: currentCategory.value || undefined,
+      sortBy: sortBy.value
     })
     blogs.value = result.list
     total.value = result.total
   } catch (error) {
     console.error('加载博客失败', error)
+    ElMessage.error('加载博客列表失败，请稍后重试')
   } finally {
     loading.value = false
   }

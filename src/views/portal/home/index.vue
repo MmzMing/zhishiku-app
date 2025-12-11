@@ -243,7 +243,8 @@ import {
   Trophy, Clock, Headset, DataLine, Connection, Cpu, 
   Platform, Box, Promotion, Guide, ArrowDown
 } from '@element-plus/icons-vue'
-import { mockService } from '@/mock'
+import { ElMessage } from 'element-plus'
+import { blogApi, videoApi } from '@/services/api'
 import type { Video } from '@/types/video'
 import type { Blog } from '@/types/blog'
 
@@ -523,14 +524,15 @@ async function loadData() {
   
   try {
     const [videos, blogs] = await Promise.all([
-      mockService.getRecommendVideos(8),
-      mockService.getHotBlogs(6)
+      videoApi.getRecommendVideos(8),
+      blogApi.getHotBlogs(6)
     ])
     
     recommendVideos.value = videos
     hotBlogs.value = blogs
   } catch (error) {
     console.error('加载数据失败', error)
+    ElMessage.error('加载数据失败，请稍后重试')
   } finally {
     videosLoading.value = false
     blogsLoading.value = false

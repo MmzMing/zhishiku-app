@@ -1,39 +1,30 @@
 /**
- * API 统一导出
+ * API 接口统一导出
  */
 
-export { userApi } from './modules/user'
-export { videoApi } from './modules/video'
-export { blogApi } from './modules/blog'
-export { adminApi } from './modules/admin'
-export { searchApi } from './modules/search'
+// 导出配置和工厂
+export * from './config'
+export * from './factory'
+
+// 导出API模块
+export * from './modules/admin'
+export * from './modules/blog'
+export * from './modules/search'
+export * from './modules/user'
+export * from './modules/video'
 
 // 导出类型
-export type { FavoriteItem, HistoryItem, PointsRecord } from './modules/user'
-export type { VideoComment, AuditRecord } from './modules/video'
-export type { BlogAnalytics, TrendData } from './modules/blog'
-export type {
-  Role,
-  Permission,
-  Department,
-  BehaviorStats,
-  BehaviorRecord,
-  ActivityTrendData,
-  PointsRankItem,
-  MallProduct,
-  MallOrder,
-  AppMonitorInfo,
-  JvmInfo,
-  CacheStats,
-  AuditLog,
-  AuditStats,
-  DashboardStats,
-  QuickStats,
-  DashboardTrendData,
-} from './modules/admin'
-export type {
-  SearchParams,
-  SearchResult,
-  SearchPageResult,
-  SearchUserItem,
-} from './modules/search'
+export type * from './modules/admin'
+export type * from './modules/blog'
+export type * from './modules/search'
+export type * from './modules/user'
+export type * from './modules/video'
+
+// 统一导出API对象
+export const api = {
+  admin: () => import('./modules/admin').then(m => m.adminApi),
+  blog: () => import('./modules/blog').then(m => m.blogApi),
+  search: () => import('./modules/search').then(m => m.searchApi),
+  user: () => import('./modules/user').then(m => m.userApi),
+  video: () => import('./modules/video').then(m => m.videoApi),
+}

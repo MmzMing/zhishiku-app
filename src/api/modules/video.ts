@@ -2,143 +2,144 @@
  * 视频相关 API
  */
 
-import request from '@/utils/request'
+import { createApi } from '@/api/factory'
 import type { Video, VideoQueryParams, PageResult } from '@/types/video'
 
-const PREFIX = '/video'
+// 创建视频API实例
+const videoApiInstance = createApi('video')
 
 export const videoApi = {
   // 获取视频列表
   getList(params: VideoQueryParams) {
-    return request.get<PageResult<Video>>(`${PREFIX}/list`, params)
+    return videoApiInstance.get<PageResult<Video>>('/list', params)
   },
 
   // 获取视频详情
   getDetail(id: string) {
-    return request.get<Video>(`${PREFIX}/${id}`)
+    return videoApiInstance.get<Video>(`/${id}`)
   },
 
   // 创建视频
   create(data: Partial<Video>) {
-    return request.post<{ id: string }>(`${PREFIX}`, data)
+    return videoApiInstance.post<{ id: string }>('', data)
   },
 
   // 更新视频
   update(id: string, data: Partial<Video>) {
-    return request.put<void>(`${PREFIX}/${id}`, data)
+    return videoApiInstance.put<void>(`/${id}`, data)
   },
 
   // 删除视频
   delete(id: string) {
-    return request.delete<void>(`${PREFIX}/${id}`)
+    return videoApiInstance.delete<void>(`/${id}`)
   },
 
   // 批量删除
   batchDelete(ids: string[]) {
-    return request.post<void>(`${PREFIX}/batch-delete`, { ids })
+    return videoApiInstance.post<void>('/batch-delete', { ids })
   },
 
   // 上传视频
   upload(file: File, onProgress?: (percent: number) => void) {
-    return request.upload<{ url: string; videoId: string }>(`${PREFIX}/upload`, file)
+    return videoApiInstance.upload<{ url: string; videoId: string }>('/upload', file, onProgress)
   },
 
   // 获取分类列表
   getCategories() {
-    return request.get<{ id: string; name: string; children?: unknown[] }[]>(`${PREFIX}/categories`)
+    return videoApiInstance.get<{ id: string; name: string; children?: unknown[] }[]>('/categories')
   },
 
   // 点赞
   like(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/like`)
+    return videoApiInstance.post<void>(`/${id}/like`)
   },
 
   // 收藏
   collect(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/collect`)
+    return videoApiInstance.post<void>(`/${id}/collect`)
   },
 
   // 获取推荐视频
   getRecommend(limit?: number) {
-    return request.get<Video[]>(`${PREFIX}/recommend`, { limit: limit || 10 })
+    return videoApiInstance.get<Video[]>('/recommend', { limit: limit || 10 })
   },
 
   // 获取热门视频
   getHot(limit?: number) {
-    return request.get<Video[]>(`${PREFIX}/hot`, { limit: limit || 10 })
+    return videoApiInstance.get<Video[]>('/hot', { limit: limit || 10 })
   },
 
   // 增加播放量
   addPlayCount(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/play`)
+    return videoApiInstance.post<void>(`/${id}/play`)
   },
 
   // 取消点赞
   unlike(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/unlike`)
+    return videoApiInstance.post<void>(`/${id}/unlike`)
   },
 
   // 取消收藏
   uncollect(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/uncollect`)
+    return videoApiInstance.post<void>(`/${id}/uncollect`)
   },
 
   // ========== 评论相关 ==========
   // 获取评论列表
   getComments(videoId: string, params: { pageNum: number; pageSize: number }) {
-    return request.get<PageResult<VideoComment>>(`${PREFIX}/${videoId}/comments`, params)
+    return videoApiInstance.get<PageResult<VideoComment>>(`/${videoId}/comments`, params)
   },
 
   // 发表评论
   addComment(videoId: string, data: { content: string; parentId?: string }) {
-    return request.post<{ id: string }>(`${PREFIX}/${videoId}/comments`, data)
+    return videoApiInstance.post<{ id: string }>(`/${videoId}/comments`, data)
   },
 
   // 删除评论
   deleteComment(videoId: string, commentId: string) {
-    return request.delete<void>(`${PREFIX}/${videoId}/comments/${commentId}`)
+    return videoApiInstance.delete<void>(`/${videoId}/comments/${commentId}`)
   },
 
   // 评论点赞
   likeComment(videoId: string, commentId: string) {
-    return request.post<void>(`${PREFIX}/${videoId}/comments/${commentId}/like`)
+    return videoApiInstance.post<void>(`/${videoId}/comments/${commentId}/like`)
   },
 
   // ========== 分类管理 ==========
   // 创建分类
   createCategory(data: { name: string; parentId?: string; icon?: string; sort?: number }) {
-    return request.post<{ id: string }>(`${PREFIX}/categories`, data)
+    return videoApiInstance.post<{ id: string }>('/categories', data)
   },
 
   // 更新分类
   updateCategory(id: string, data: { name?: string; icon?: string; sort?: number }) {
-    return request.put<void>(`${PREFIX}/categories/${id}`, data)
+    return videoApiInstance.put<void>(`/categories/${id}`, data)
   },
 
   // 删除分类
   deleteCategory(id: string) {
-    return request.delete<void>(`${PREFIX}/categories/${id}`)
+    return videoApiInstance.delete<void>(`/categories/${id}`)
   },
 
   // ========== 审核相关 ==========
   // 获取待审核视频列表
   getPendingList(params: VideoQueryParams) {
-    return request.get<PageResult<Video>>(`${PREFIX}/audit/pending`, params)
+    return videoApiInstance.get<PageResult<Video>>('/audit/pending', params)
   },
 
   // 审核通过
   approve(id: string, data?: { comment?: string }) {
-    return request.post<void>(`${PREFIX}/audit/${id}/approve`, data)
+    return videoApiInstance.post<void>(`/audit/${id}/approve`, data)
   },
 
   // 审核拒绝
   reject(id: string, data: { reason: string }) {
-    return request.post<void>(`${PREFIX}/audit/${id}/reject`, data)
+    return videoApiInstance.post<void>(`/audit/${id}/reject`, data)
   },
 
   // 获取审核历史
   getAuditHistory(id: string) {
-    return request.get<AuditRecord[]>(`${PREFIX}/${id}/audit-history`)
+    return videoApiInstance.get<AuditRecord[]>(`/${id}/audit-history`)
   },
 }
 

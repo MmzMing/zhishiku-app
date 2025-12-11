@@ -29,6 +29,16 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  server: {
+    host: '0.0.0.0',
+    port: 3000,
+    strictPort: false,
+    allowedHosts: [
+      '11nx7iy467781.vicp.fun',
+      'localhost',
+      '127.0.0.1'
+    ]
+  },
   css: {
     preprocessorOptions: {
       scss: {

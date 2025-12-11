@@ -2,169 +2,170 @@
  * 博客相关 API
  */
 
-import request from '@/utils/request'
+import { createApi } from '@/api/factory'
 import type { Blog, BlogQueryParams, PageResult } from '@/types/blog'
 
-const PREFIX = '/blog'
+// 创建博客API模块
+const blogApiInstance = createApi('blog')
 
 export const blogApi = {
   // 获取博客列表
   getList(params: BlogQueryParams) {
-    return request.get<PageResult<Blog>>(`${PREFIX}/list`, params)
+    return blogApiInstance.get<PageResult<Blog>>('/list', params)
   },
 
   // 获取博客详情
   getDetail(id: string) {
-    return request.get<Blog>(`${PREFIX}/${id}`)
+    return blogApiInstance.get<Blog>(`/${id}`)
   },
 
   // 创建博客
   create(data: Partial<Blog>) {
-    return request.post<{ id: string }>(`${PREFIX}`, data)
+    return blogApiInstance.post<{ id: string }>('', data)
   },
 
   // 更新博客
   update(id: string, data: Partial<Blog>) {
-    return request.put<void>(`${PREFIX}/${id}`, data)
+    return blogApiInstance.put<void>(`/${id}`, data)
   },
 
   // 删除博客
   delete(id: string) {
-    return request.delete<void>(`${PREFIX}/${id}`)
+    return blogApiInstance.delete<void>(`/${id}`)
   },
 
   // 批量删除
   batchDelete(ids: string[]) {
-    return request.post<void>(`${PREFIX}/batch-delete`, { ids })
+    return blogApiInstance.post<void>('/batch-delete', { ids })
   },
 
   // 发布博客
   publish(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/publish`)
+    return blogApiInstance.post<void>(`/${id}/publish`)
   },
 
   // 下线博客
   offline(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/offline`)
+    return blogApiInstance.post<void>(`/${id}/offline`)
   },
 
   // 保存草稿
   saveDraft(data: Partial<Blog>) {
-    return request.post<{ id: string }>(`${PREFIX}/draft`, data)
+    return blogApiInstance.post<{ id: string }>('/draft', data)
   },
 
   // 获取分类列表
   getCategories() {
-    return request.get<{ id: string; name: string; children?: unknown[] }[]>(`${PREFIX}/categories`)
+    return blogApiInstance.get<{ id: string; name: string; children?: unknown[] }[]>('/categories')
   },
 
   // 获取标签列表
   getTags() {
-    return request.get<{ id: string; name: string; count: number }[]>(`${PREFIX}/tags`)
+    return blogApiInstance.get<{ id: string; name: string; count: number }[]>('/tags')
   },
 
   // 点赞
   like(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/like`)
+    return blogApiInstance.post<void>(`/${id}/like`)
   },
 
   // 收藏
   collect(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/collect`)
+    return blogApiInstance.post<void>(`/${id}/collect`)
   },
 
   // 获取推荐博客
   getRecommend(limit?: number) {
-    return request.get<Blog[]>(`${PREFIX}/recommend`, { limit: limit || 10 })
+    return blogApiInstance.get<Blog[]>('/recommend', { limit: limit || 10 })
   },
 
   // 获取热门博客
   getHot(limit?: number) {
-    return request.get<Blog[]>(`${PREFIX}/hot`, { limit: limit || 10 })
+    return blogApiInstance.get<Blog[]>('/hot', { limit: limit || 10 })
   },
 
   // 上传图片
   uploadImage(file: File) {
-    return request.upload<{ url: string }>(`${PREFIX}/upload-image`, file)
+    return blogApiInstance.upload<{ url: string }>('/upload-image', file)
   },
 
   // 取消点赞
   unlike(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/unlike`)
+    return blogApiInstance.post<void>(`/${id}/unlike`)
   },
 
   // 取消收藏
   uncollect(id: string) {
-    return request.post<void>(`${PREFIX}/${id}/uncollect`)
+    return blogApiInstance.post<void>(`/${id}/uncollect`)
   },
 
   // ========== 评论相关 ==========
   // 获取评论列表
   getComments(blogId: string, params: { pageNum: number; pageSize: number }) {
-    return request.get<PageResult<BlogComment>>(`${PREFIX}/${blogId}/comments`, params)
+    return blogApiInstance.get<PageResult<BlogComment>>(`/${blogId}/comments`, params)
   },
 
   // 发表评论
   addComment(blogId: string, data: { content: string; parentId?: string }) {
-    return request.post<{ id: string }>(`${PREFIX}/${blogId}/comments`, data)
+    return blogApiInstance.post<{ id: string }>(`/${blogId}/comments`, data)
   },
 
   // 删除评论
   deleteComment(blogId: string, commentId: string) {
-    return request.delete<void>(`${PREFIX}/${blogId}/comments/${commentId}`)
+    return blogApiInstance.delete<void>(`/${blogId}/comments/${commentId}`)
   },
 
   // 评论点赞
   likeComment(blogId: string, commentId: string) {
-    return request.post<void>(`${PREFIX}/${blogId}/comments/${commentId}/like`)
+    return blogApiInstance.post<void>(`/${blogId}/comments/${commentId}/like`)
   },
 
   // ========== 分类管理 ==========
   // 创建分类
   createCategory(data: { name: string; parentId?: string; icon?: string; description?: string; sort?: number }) {
-    return request.post<{ id: string }>(`${PREFIX}/categories`, data)
+    return blogApiInstance.post<{ id: string }>('/categories', data)
   },
 
   // 更新分类
   updateCategory(id: string, data: { name?: string; icon?: string; description?: string; sort?: number }) {
-    return request.put<void>(`${PREFIX}/categories/${id}`, data)
+    return blogApiInstance.put<void>(`/categories/${id}`, data)
   },
 
   // 删除分类
   deleteCategory(id: string) {
-    return request.delete<void>(`${PREFIX}/categories/${id}`)
+    return blogApiInstance.delete<void>(`/categories/${id}`)
   },
 
   // ========== 标签管理 ==========
   // 创建标签
   createTag(data: { name: string; color?: string }) {
-    return request.post<{ id: string }>(`${PREFIX}/tags`, data)
+    return blogApiInstance.post<{ id: string }>('/tags', data)
   },
 
   // 更新标签
   updateTag(id: string, data: { name?: string; color?: string }) {
-    return request.put<void>(`${PREFIX}/tags/${id}`, data)
+    return blogApiInstance.put<void>(`/tags/${id}`, data)
   },
 
   // 删除标签
   deleteTag(id: string) {
-    return request.delete<void>(`${PREFIX}/tags/${id}`)
+    return blogApiInstance.delete<void>(`/tags/${id}`)
   },
 
   // ========== 统计分析 ==========
   // 获取博客统计数据
   getAnalytics(params?: { startTime?: string; endTime?: string }) {
-    return request.get<BlogAnalytics>(`${PREFIX}/analytics`, params as Record<string, unknown>)
+    return blogApiInstance.get<BlogAnalytics>('/analytics', params as Record<string, unknown>)
   },
 
   // 获取趋势数据
   getTrends(params: { type: 'day' | 'week' | 'month'; startTime: string; endTime: string }) {
-    return request.get<TrendData[]>(`${PREFIX}/analytics/trends`, params as Record<string, unknown>)
+    return blogApiInstance.get<TrendData[]>('/analytics/trends', params as Record<string, unknown>)
   },
 
   // 获取排行榜
   getRanking(params: { type: 'read' | 'like' | 'collect'; limit?: number }) {
-    return request.get<Blog[]>(`${PREFIX}/ranking`, params as Record<string, unknown>)
+    return blogApiInstance.get<Blog[]>('/ranking', params as Record<string, unknown>)
   },
 }
 

@@ -10,7 +10,11 @@ import { setupRouterGuard } from './guard'
 const authRoutes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/portal'
+    name: 'RootRedirect',
+    redirect: '/portal',
+    meta: {
+      requiresAuth: false
+    }
   },
   {
     path: '/login',
@@ -462,7 +466,11 @@ const commonRoutes: RouteRecordRaw[] = [
 // 404 重定向（必须放在最后）
 const notFoundRoute: RouteRecordRaw = {
   path: '/:pathMatch(.*)*',
-  redirect: '/404'
+  name: 'NotFoundRedirect',
+  redirect: '/404',
+  meta: {
+    requiresAuth: false
+  }
 }
 
 // 合并所有路由

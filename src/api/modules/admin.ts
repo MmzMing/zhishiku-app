@@ -2,319 +2,320 @@
  * 后台管理相关 API
  */
 
-import request from '@/utils/request'
+import { createApi } from '@/api/factory'
 import type { UserListItem, UserQueryParams, PageResult } from '@/types/user'
 
-const PREFIX = '/admin'
+// 创建管理API模块
+const adminApiInstance = createApi('admin')
 
 export const adminApi = {
   // ========== 用户管理 ==========
   // 获取用户列表
   getUserList(params: UserQueryParams) {
-    return request.get<PageResult<UserListItem>>(`${PREFIX}/users`, params)
+    return adminApiInstance.get<PageResult<UserListItem>>('/users', params)
   },
 
   // 获取用户详情
   getUserDetail(id: string) {
-    return request.get<UserListItem>(`${PREFIX}/users/${id}`)
+    return adminApiInstance.get<UserListItem>(`/users/${id}`)
   },
 
   // 创建用户
   createUser(data: Partial<UserListItem> & { password: string }) {
-    return request.post<{ id: string }>(`${PREFIX}/users`, data)
+    return adminApiInstance.post<{ id: string }>('/users', data)
   },
 
   // 更新用户
   updateUser(id: string, data: Partial<UserListItem>) {
-    return request.put<void>(`${PREFIX}/users/${id}`, data)
+    return adminApiInstance.put<void>(`/users/${id}`, data)
   },
 
   // 删除用户
   deleteUser(id: string) {
-    return request.delete<void>(`${PREFIX}/users/${id}`)
+    return adminApiInstance.delete<void>(`/users/${id}`)
   },
 
   // 批量删除用户
   batchDeleteUsers(ids: string[]) {
-    return request.post<void>(`${PREFIX}/users/batch-delete`, { ids })
+    return adminApiInstance.post<void>('/users/batch-delete', { ids })
   },
 
   // 重置用户密码
   resetUserPassword(id: string) {
-    return request.post<{ password: string }>(`${PREFIX}/users/${id}/reset-password`)
+    return adminApiInstance.post<{ password: string }>(`/users/${id}/reset-password`)
   },
 
   // 修改用户状态
   changeUserStatus(id: string, status: 'active' | 'disabled' | 'locked') {
-    return request.put<void>(`${PREFIX}/users/${id}/status`, { status })
+    return adminApiInstance.put<void>(`/users/${id}/status`, { status })
   },
 
   // ========== 角色管理 ==========
   // 获取角色列表
   getRoleList() {
-    return request.get<{ id: string; name: string; code: string; description: string }[]>(`${PREFIX}/roles`)
+    return adminApiInstance.get<{ id: string; name: string; code: string; description: string }[]>('/roles')
   },
 
   // ========== 字典管理 ==========
   // 获取字典类型列表
   getDictTypeList() {
-    return request.get<{ id: string; name: string; code: string; status: string }[]>(`${PREFIX}/dict/types`)
+    return adminApiInstance.get<{ id: string; name: string; code: string; status: string }[]>('/dict/types')
   },
 
   // 获取字典项列表
   getDictItemList(typeCode: string) {
-    return request.get<{ id: string; label: string; value: string; sort: number }[]>(`${PREFIX}/dict/items`, { typeCode })
+    return adminApiInstance.get<{ id: string; label: string; value: string; sort: number }[]>('/dict/items', { typeCode })
   },
 
   // 创建字典项
   createDictItem(data: { typeCode: string; label: string; value: string; sort?: number }) {
-    return request.post<{ id: string }>(`${PREFIX}/dict/items`, data)
+    return adminApiInstance.post<{ id: string }>('/dict/items', data)
   },
 
   // 更新字典项
   updateDictItem(id: string, data: { label: string; value: string; sort?: number }) {
-    return request.put<void>(`${PREFIX}/dict/items/${id}`, data)
+    return adminApiInstance.put<void>(`/dict/items/${id}`, data)
   },
 
   // 删除字典项
   deleteDictItem(id: string) {
-    return request.delete<void>(`${PREFIX}/dict/items/${id}`)
+    return adminApiInstance.delete<void>(`/dict/items/${id}`)
   },
 
   // ========== 积分管理 ==========
   // 获取积分规则列表
   getPointsRules() {
-    return request.get<{ id: string; name: string; type: string; points: number; description: string }[]>(`${PREFIX}/points/rules`)
+    return adminApiInstance.get<{ id: string; name: string; type: string; points: number; description: string }[]>('/points/rules')
   },
 
   // 获取积分流水
   getPointsRecords(params: { userId?: string; type?: string; pageNum: number; pageSize: number }) {
-    return request.get<PageResult<{ id: string; userId: string; type: string; points: number; description: string; createdAt: string }>>(`${PREFIX}/points/records`, params)
+    return adminApiInstance.get<PageResult<{ id: string; userId: string; type: string; points: number; description: string; createdAt: string }>>('/points/records', params)
   },
 
   // ========== 系统监控 ==========
   // 获取系统信息
   getSystemInfo() {
-    return request.get<{
+    return adminApiInstance.get<{
       cpu: { usage: number; cores: number }
       memory: { total: number; used: number; free: number }
       disk: { total: number; used: number; free: number }
       os: { name: string; version: string; uptime: number }
-    }>(`${PREFIX}/monitor/system`)
+    }>('/monitor/system')
   },
 
   // 获取在线用户
   getOnlineUsers() {
-    return request.get<{ id: string; username: string; ip: string; loginTime: string }[]>(`${PREFIX}/monitor/online-users`)
+    return adminApiInstance.get<{ id: string; username: string; ip: string; loginTime: string }[]>('/monitor/online-users')
   },
 
   // 获取操作日志
   getOperationLogs(params: { userId?: string; module?: string; pageNum: number; pageSize: number }) {
-    return request.get<PageResult<{ id: string; userId: string; username: string; module: string; action: string; ip: string; createdAt: string }>>(`${PREFIX}/logs/operation`, params)
+    return adminApiInstance.get<PageResult<{ id: string; userId: string; username: string; module: string; action: string; ip: string; createdAt: string }>>('/logs/operation', params)
   },
 
   // 获取登录日志
   getLoginLogs(params: { userId?: string; status?: string; pageNum: number; pageSize: number }) {
-    return request.get<PageResult<{ id: string; userId: string; username: string; ip: string; location: string; browser: string; os: string; status: string; message: string; createdAt: string }>>(`${PREFIX}/logs/login`, params)
+    return adminApiInstance.get<PageResult<{ id: string; userId: string; username: string; ip: string; location: string; browser: string; os: string; status: string; message: string; createdAt: string }>>('/logs/login', params)
   },
 
   // ========== 角色管理完善 ==========
   // 获取角色详情
   getRoleDetail(id: string) {
-    return request.get<Role>(`${PREFIX}/roles/${id}`)
+    return adminApiInstance.get<Role>(`/roles/${id}`)
   },
 
   // 创建角色
   createRole(data: { name: string; code: string; description?: string; permissions?: string[] }) {
-    return request.post<{ id: string }>(`${PREFIX}/roles`, data)
+    return adminApiInstance.post<{ id: string }>('/roles', data)
   },
 
   // 更新角色
   updateRole(id: string, data: { name?: string; description?: string; permissions?: string[] }) {
-    return request.put<void>(`${PREFIX}/roles/${id}`, data)
+    return adminApiInstance.put<void>(`/roles/${id}`, data)
   },
 
   // 删除角色
   deleteRole(id: string) {
-    return request.delete<void>(`${PREFIX}/roles/${id}`)
+    return adminApiInstance.delete<void>(`/roles/${id}`)
   },
 
   // 获取权限列表
   getPermissions() {
-    return request.get<Permission[]>(`${PREFIX}/permissions`)
+    return adminApiInstance.get<Permission[]>('/permissions')
   },
 
   // ========== 部门管理 ==========
   // 获取部门树
   getDepartmentTree() {
-    return request.get<Department[]>(`${PREFIX}/departments/tree`)
+    return adminApiInstance.get<Department[]>('/departments/tree')
   },
 
   // 获取部门列表
   getDepartmentList(params?: { keyword?: string }) {
-    return request.get<Department[]>(`${PREFIX}/departments`, params as Record<string, unknown>)
+    return adminApiInstance.get<Department[]>('/departments', params as Record<string, unknown>)
   },
 
   // 获取部门详情
   getDepartmentDetail(id: string) {
-    return request.get<Department>(`${PREFIX}/departments/${id}`)
+    return adminApiInstance.get<Department>(`/departments/${id}`)
   },
 
   // 创建部门
   createDepartment(data: { name: string; parentId?: string; leaderId?: string; sort?: number }) {
-    return request.post<{ id: string }>(`${PREFIX}/departments`, data)
+    return adminApiInstance.post<{ id: string }>('/departments', data)
   },
 
   // 更新部门
   updateDepartment(id: string, data: { name?: string; leaderId?: string; sort?: number }) {
-    return request.put<void>(`${PREFIX}/departments/${id}`, data)
+    return adminApiInstance.put<void>(`/departments/${id}`, data)
   },
 
   // 删除部门
   deleteDepartment(id: string) {
-    return request.delete<void>(`${PREFIX}/departments/${id}`)
+    return adminApiInstance.delete<void>(`/departments/${id}`)
   },
 
   // ========== 用户行为分析 ==========
   // 获取用户行为统计
   getBehaviorStats(params?: { startTime?: string; endTime?: string }) {
-    return request.get<BehaviorStats>(`${PREFIX}/behavior/stats`, params as Record<string, unknown>)
+    return adminApiInstance.get<BehaviorStats>('/behavior/stats', params as Record<string, unknown>)
   },
 
   // 获取用户行为列表
   getBehaviorList(params: { userId?: string; type?: string; pageNum: number; pageSize: number }) {
-    return request.get<PageResult<BehaviorRecord>>(`${PREFIX}/behavior/list`, params)
+    return adminApiInstance.get<PageResult<BehaviorRecord>>('/behavior/list', params)
   },
 
   // 获取用户活跃趋势
   getActivityTrends(params: { type: 'day' | 'week' | 'month'; startTime: string; endTime: string }) {
-    return request.get<ActivityTrendData[]>(`${PREFIX}/behavior/trends`, params as Record<string, unknown>)
+    return adminApiInstance.get<ActivityTrendData[]>('/behavior/trends', params as Record<string, unknown>)
   },
 
   // ========== 积分管理完善 ==========
   // 创建积分规则
   createPointsRule(data: { name: string; type: string; points: number; description?: string; enabled?: boolean }) {
-    return request.post<{ id: string }>(`${PREFIX}/points/rules`, data)
+    return adminApiInstance.post<{ id: string }>('/points/rules', data)
   },
 
   // 更新积分规则
   updatePointsRule(id: string, data: { name?: string; points?: number; description?: string; enabled?: boolean }) {
-    return request.put<void>(`${PREFIX}/points/rules/${id}`, data)
+    return adminApiInstance.put<void>(`/points/rules/${id}`, data)
   },
 
   // 删除积分规则
   deletePointsRule(id: string) {
-    return request.delete<void>(`${PREFIX}/points/rules/${id}`)
+    return adminApiInstance.delete<void>(`/points/rules/${id}`)
   },
 
   // 获取积分排行榜
   getPointsRanking(params?: { limit?: number; type?: 'total' | 'month' | 'week' }) {
-    return request.get<PointsRankItem[]>(`${PREFIX}/points/ranking`, params as Record<string, unknown>)
+    return adminApiInstance.get<PointsRankItem[]>('/points/ranking', params as Record<string, unknown>)
   },
 
   // 手动调整用户积分
   adjustUserPoints(userId: string, data: { points: number; reason: string }) {
-    return request.post<void>(`${PREFIX}/points/adjust`, { userId, ...data })
+    return adminApiInstance.post<void>('/points/adjust', { userId, ...data })
   },
 
   // ========== 积分商城 ==========
   // 获取商品列表
   getMallProducts(params?: { status?: string; categoryId?: string; pageNum: number; pageSize: number }) {
-    return request.get<PageResult<MallProduct>>(`${PREFIX}/points/mall/products`, params)
+    return adminApiInstance.get<PageResult<MallProduct>>('/points/mall/products', params)
   },
 
   // 创建商品
   createMallProduct(data: Partial<MallProduct>) {
-    return request.post<{ id: string }>(`${PREFIX}/points/mall/products`, data)
+    return adminApiInstance.post<{ id: string }>('/points/mall/products', data)
   },
 
   // 更新商品
   updateMallProduct(id: string, data: Partial<MallProduct>) {
-    return request.put<void>(`${PREFIX}/points/mall/products/${id}`, data)
+    return adminApiInstance.put<void>(`/points/mall/products/${id}`, data)
   },
 
   // 删除商品
   deleteMallProduct(id: string) {
-    return request.delete<void>(`${PREFIX}/points/mall/products/${id}`)
+    return adminApiInstance.delete<void>(`/points/mall/products/${id}`)
   },
 
   // 获取兑换订单
   getMallOrders(params: { status?: string; userId?: string; pageNum: number; pageSize: number }) {
-    return request.get<PageResult<MallOrder>>(`${PREFIX}/points/mall/orders`, params)
+    return adminApiInstance.get<PageResult<MallOrder>>('/points/mall/orders', params)
   },
 
   // 处理兑换订单
   processMallOrder(id: string, data: { action: 'approve' | 'reject' | 'ship' | 'complete'; remark?: string }) {
-    return request.post<void>(`${PREFIX}/points/mall/orders/${id}/process`, data)
+    return adminApiInstance.post<void>(`/points/mall/orders/${id}/process`, data)
   },
 
   // ========== 字典管理完善 ==========
   // 创建字典类型
   createDictType(data: { name: string; code: string; status?: string }) {
-    return request.post<{ id: string }>(`${PREFIX}/dict/types`, data)
+    return adminApiInstance.post<{ id: string }>('/dict/types', data)
   },
 
   // 更新字典类型
   updateDictType(id: string, data: { name?: string; status?: string }) {
-    return request.put<void>(`${PREFIX}/dict/types/${id}`, data)
+    return adminApiInstance.put<void>(`/dict/types/${id}`, data)
   },
 
   // 删除字典类型
   deleteDictType(id: string) {
-    return request.delete<void>(`${PREFIX}/dict/types/${id}`)
+    return adminApiInstance.delete<void>(`/dict/types/${id}`)
   },
 
   // ========== 系统监控完善 ==========
   // 获取应用监控信息
   getAppMonitor() {
-    return request.get<AppMonitorInfo>(`${PREFIX}/monitor/app`)
+    return adminApiInstance.get<AppMonitorInfo>('/monitor/app')
   },
 
   // 获取JVM信息
   getJvmInfo() {
-    return request.get<JvmInfo>(`${PREFIX}/monitor/jvm`)
+    return adminApiInstance.get<JvmInfo>('/monitor/jvm')
   },
 
   // 获取缓存统计
   getCacheStats() {
-    return request.get<CacheStats>(`${PREFIX}/monitor/cache`)
+    return adminApiInstance.get<CacheStats>('/monitor/cache')
   },
 
   // 清除缓存
   clearCache(type?: string) {
-    return request.post<void>(`${PREFIX}/monitor/cache/clear`, { type })
+    return adminApiInstance.post<void>('/monitor/cache/clear', { type })
   },
 
   // 强制下线用户
   forceLogout(userId: string) {
-    return request.post<void>(`${PREFIX}/monitor/force-logout`, { userId })
+    return adminApiInstance.post<void>('/monitor/force-logout', { userId })
   },
 
   // ========== 审计追踪 ==========
   // 获取审计日志
   getAuditLogs(params: { module?: string; action?: string; userId?: string; startTime?: string; endTime?: string; pageNum: number; pageSize: number }) {
-    return request.get<PageResult<AuditLog>>(`${PREFIX}/audit/logs`, params)
+    return adminApiInstance.get<PageResult<AuditLog>>('/audit/logs', params)
   },
 
   // 获取审计统计
   getAuditStats(params?: { startTime?: string; endTime?: string }) {
-    return request.get<AuditStats>(`${PREFIX}/audit/stats`, params as Record<string, unknown>)
+    return adminApiInstance.get<AuditStats>('/audit/stats', params as Record<string, unknown>)
   },
 
   // ========== 控制台统计 ==========
   // 获取控制台统计数据
   getDashboardStats() {
-    return request.get<DashboardStats>(`${PREFIX}/dashboard/stats`)
+    return adminApiInstance.get<DashboardStats>('/dashboard/stats')
   },
 
   // 获取快捷统计
   getQuickStats() {
-    return request.get<QuickStats>(`${PREFIX}/dashboard/quick-stats`)
+    return adminApiInstance.get<QuickStats>('/dashboard/quick-stats')
   },
 
   // 获取趋势图表数据
   getDashboardTrends(params: { type: 'day' | 'week' | 'month' }) {
-    return request.get<DashboardTrendData[]>(`${PREFIX}/dashboard/trends`, params as Record<string, unknown>)
+    return adminApiInstance.get<DashboardTrendData[]>('/dashboard/trends', params as Record<string, unknown>)
   },
 }
 

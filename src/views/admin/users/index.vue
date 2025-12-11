@@ -221,15 +221,15 @@
 import { ref, reactive, onMounted } from 'vue'
 import { Plus, Delete, Search, Refresh, Edit, Key, Clock } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { mockService } from '@/mock'
-import type { UserListItem } from '@/types/user'
+import { userApi } from '@/services/api'
+import type { UserListItem, UserQueryParams } from '@/types/user'
 
 // 加载状态
 const loading = ref(false)
 const submitLoading = ref(false)
 
 // 查询参数
-const queryParams = reactive({
+const queryParams = reactive<UserQueryParams>({
   keyword: '',
   status: '',
   roleId: '',
@@ -287,15 +287,16 @@ const formRules: FormRules = {
 async function loadData() {
   loading.value = true
   try {
-    const result = await mockService.getUserList({
-      pageNum: queryParams.pageNum,
-      pageSize: queryParams.pageSize,
+    // 使用API服务层调用，便于后续切换到真实API
+    const result = await userApi.getUserList({
+      ...queryParams,
       keyword: queryParams.keyword || undefined
     })
     tableData.value = result.list
     total.value = result.total
   } catch (error) {
     console.error('加载用户列表失败', error)
+    ElMessage.error('加载用户列表失败，请稍后重试')
   } finally {
     loading.value = false
   }

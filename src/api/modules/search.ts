@@ -2,56 +2,57 @@
  * 搜索相关 API
  */
 
-import request from '@/utils/request'
 import type { Video } from '@/types/video'
 import type { Blog } from '@/types/blog'
+import { createApi } from '@/api/factory'
 
-const PREFIX = '/search'
+// 创建搜索API实例
+const searchApiInstance = createApi('search')
 
 export const searchApi = {
   // 综合搜索
   search(params: SearchParams) {
-    return request.get<SearchResult>(`${PREFIX}`, params as unknown as Record<string, unknown>)
+    return searchApiInstance.get<SearchResult>('', params)
   },
 
   // 搜索视频
   searchVideos(params: SearchParams) {
-    return request.get<SearchPageResult<Video>>(`${PREFIX}/videos`, params as unknown as Record<string, unknown>)
+    return searchApiInstance.get<SearchPageResult<Video>>('/videos', params)
   },
 
   // 搜索博客
   searchBlogs(params: SearchParams) {
-    return request.get<SearchPageResult<Blog>>(`${PREFIX}/blogs`, params as unknown as Record<string, unknown>)
+    return searchApiInstance.get<SearchPageResult<Blog>>('/blogs', params)
   },
 
   // 搜索用户
   searchUsers(params: SearchParams) {
-    return request.get<SearchPageResult<SearchUserItem>>(`${PREFIX}/users`, params as unknown as Record<string, unknown>)
+    return searchApiInstance.get<SearchPageResult<SearchUserItem>>('/users', params)
   },
 
   // 获取热门搜索词
   getHotKeywords(limit?: number) {
-    return request.get<string[]>(`${PREFIX}/hot-keywords`, { limit: limit || 10 })
+    return searchApiInstance.get<string[]>('/hot-keywords', { limit: limit || 10 })
   },
 
   // 获取搜索建议
   getSuggestions(keyword: string) {
-    return request.get<string[]>(`${PREFIX}/suggestions`, { keyword })
+    return searchApiInstance.get<string[]>('/suggestions', { keyword })
   },
 
   // 获取搜索历史
   getHistory() {
-    return request.get<string[]>(`${PREFIX}/history`)
+    return searchApiInstance.get<string[]>('/history')
   },
 
   // 清除搜索历史
   clearHistory() {
-    return request.delete<void>(`${PREFIX}/history`)
+    return searchApiInstance.delete<void>('/history')
   },
 
   // 删除单条搜索历史
   removeHistoryItem(keyword: string) {
-    return request.delete<void>(`${PREFIX}/history/${encodeURIComponent(keyword)}`)
+    return searchApiInstance.delete<void>(`/history/${encodeURIComponent(keyword)}`)
   },
 }
 

@@ -7,6 +7,7 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse,
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user'
 import router from '@/router'
+import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, ERROR_CODES, ERROR_MESSAGES } from '@/api/config'
 
 // 响应数据接口
 export interface ApiResponse<T = unknown> {
@@ -25,40 +26,15 @@ interface RequestConfig extends AxiosRequestConfig {
   withToken?: boolean
 }
 
-// 错误码映射
-const ERROR_MESSAGES: Record<number, string> = {
-  400: '请求参数错误',
-  401: '未授权，请重新登录',
-  403: '拒绝访问',
-  404: '请求资源不存在',
-  405: '请求方法不允许',
-  408: '请求超时',
-  500: '服务器内部错误',
-  501: '服务未实现',
-  502: '网关错误',
-  503: '服务不可用',
-  504: '网关超时',
-}
-
-// 业务错误码
-const BUSINESS_ERROR_CODES = {
-  SUCCESS: 0,
-  TOKEN_EXPIRED: 10001,
-  TOKEN_INVALID: 10002,
-  PERMISSION_DENIED: 10003,
-}
-
 class Request {
   private instance: AxiosInstance
   private pendingRequests: Map<string, AbortController> = new Map()
 
   constructor() {
     this.instance = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-      timeout: 15000,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      baseURL: API_BASE_URL,
+      timeout: API_TIMEOUT,
+      headers: DEFAULT_HEADERS,
     })
 
     this.setupInterceptors()
@@ -145,12 +121,12 @@ class Request {
     const { code, message } = data
 
     switch (code) {
-      case BUSINESS_ERROR_CODES.TOKEN_EXPIRED:
-      case BUSINESS_ERROR_CODES.TOKEN_INVALID:
+      case ERROR_CODES.TOKEN_EXPIRED:
+      case ERROR_CODES.TOKEN_INVALID:
         // Token过期或无效
         this.handleTokenError()
         break
-      case BUSINESS_ERROR_CODES.PERMISSION_DENIED:
+      case ERROR_CODES.PERMISSION_DENIED:
         ElMessage.error('权限不足')
         break
       default:
