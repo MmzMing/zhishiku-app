@@ -5,8 +5,8 @@
       <div class="hero-background"></div>
       <div class="hero-overlay"></div>
       <div class="hero-content-wrapper">
-        <h1 class="hero-main-title">探索知识的海洋</h1>
-        <p class="hero-main-desc">海量视频教程、技术博客，助你快速提升技能</p>
+        <h1 class="hero-main-title">知 识 库 学 习 平 台</h1>
+          <p class="hero-main-desc">探 索 知 识 的 海 洋</p>
         <div class="hero-main-search">
           <el-input
             v-model="searchKeyword"
@@ -606,6 +606,20 @@ onUnMount(() => {
 
 <style scoped lang="scss">
 .portal-home {
+  /* 全局span样式，确保所有span元素无法被选中 */
+  span {
+    user-select: none;
+  }
+  
+  /* 确保标签元素无法被选中 */
+  :deep(.el-tag) {
+    user-select: none;
+  }
+  
+  :deep(.el-tag__content) {
+    user-select: none;
+  }
+  
   .section-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -679,6 +693,7 @@ onUnMount(() => {
     animation: fadeInUp 0.8s ease-out;
     width: 500px;
     margin: 0 auto 24px;
+    user-select: none; /* 防止文本被选中 */
   }
   
   .hero-main-desc {
@@ -687,6 +702,7 @@ onUnMount(() => {
     margin-bottom: 48px;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     animation: fadeInUp 1s ease-out 0.2s both;
+    user-select: none; /* 防止文本被选中 */
   }
   
   .hero-main-search {
@@ -696,13 +712,15 @@ onUnMount(() => {
     width: fit-content;
     
     :deep(.el-input__wrapper) {
-      background: var(--color-bg-primary);
+      background: rgba(255, 255, 255, 0.2); /* 透明20% */
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--color-border);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 30px;
       transition: all 0.3s ease;
       
       &.is-focus {
+        //background: rgba(255, 255, 255, 1); /* 选中时还原 */
+        background: var(--color-bg-primary);
         border-color: var(--color-brand-500);
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--color-brand-500) inset;
       }
@@ -746,6 +764,7 @@ onUnMount(() => {
     font-size: 14px;
     margin-bottom: 56px;
     animation: fadeInUp 1.4s ease-out 0.6s both;
+    user-select: none;
     
     .hot-tag {
       cursor: pointer;
@@ -753,6 +772,7 @@ onUnMount(() => {
       border: 1px solid rgba(255, 255, 255, 0.3);
       color: #fff;
       backdrop-filter: blur(10px);
+      user-select: none;
       
       &:hover {
         background: rgba(255, 255, 255, 0.35);
@@ -775,11 +795,14 @@ onUnMount(() => {
         font-size: 48px;
         font-weight: 700;
         text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        user-select: none; /* 防止文本被选中 */
       }
       
       .stat-label {
         font-size: 16px;
         opacity: 0.9;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        user-select: none; /* 防止文本被选中 */
       }
     }
   }
