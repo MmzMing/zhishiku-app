@@ -721,8 +721,8 @@ onUnMount(() => {
       &.is-focus {
         //background: rgba(255, 255, 255, 1); /* 选中时还原 */
         background: var(--color-bg-primary);
-        border-color: var(--color-brand-500);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--color-brand-500) inset;
+        border-color: transparent; /* 去除选中时的边框 */
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* 去除内阴影边框效果 */
       }
     }
     
