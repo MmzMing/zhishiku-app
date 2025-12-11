@@ -162,13 +162,23 @@
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="150" show-overflow-tooltip />
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="140" fixed="right">
             <template #default="{ row }">
-              <template v-if="currentType?.category !== 'system'">
-                <el-button size="small" type="primary" link @click="handleEditItem(row)">编辑</el-button>
-                <el-button size="small" type="danger" link @click="handleDeleteItem(row)">删除</el-button>
-              </template>
-              <span v-else class="text-tertiary">不可修改</span>
+              <div class="action-buttons compact">
+                <template v-if="currentType?.category !== 'system'">
+                  <div class="action-row">
+                    <el-button size="small" type="primary" link @click="handleEditItem(row)">
+                      <el-icon><EditIcon /></el-icon>编辑
+                    </el-button>
+                  </div>
+                  <div class="action-row">
+                    <el-button size="small" type="danger" link @click="handleDeleteItem(row)">
+                      <el-icon><DeleteIcon /></el-icon>删除
+                    </el-button>
+                  </div>
+                </template>
+                <span v-else class="text-tertiary">不可修改</span>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -245,7 +255,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { 
-  Plus, Edit, Delete, Search, Refresh, Download, Upload, ArrowDown,
+  Plus, Edit as EditIcon, Delete as DeleteIcon, Search, Refresh, Download, Upload, ArrowDown,
   Lock, Briefcase, User, Clock, Top, Bottom
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules, type UploadFile } from 'element-plus'
@@ -594,6 +604,18 @@ if (firstType) {
 </script>
 
 <style scoped lang="scss">
+/* 紧凑操作栏样式 */
+:deep(.action-buttons.compact) {
+  .action-row {
+    gap: 2px;
+    margin-bottom: 2px;
+    .el-button {
+      padding: 0 8px;
+      font-size: 12px;
+      min-width: auto;
+    }
+  }
+}
 .dict-management-page {
   display: flex;
   flex-direction: column;

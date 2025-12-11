@@ -17,7 +17,7 @@
           <h4>Vue 3 完整教程 - 第{{ i }}集</h4>
           <p>收藏于 2024-12-0{{ i }}</p>
         </div>
-        <el-button type="danger" text>取消收藏</el-button>
+        <el-button type="danger" size="small">取消收藏</el-button>
       </div>
     </div>
     
@@ -27,7 +27,7 @@
           <h4>深入理解 TypeScript 类型系统 - 第{{ i }}篇</h4>
           <p>收藏于 2024-12-0{{ i }}</p>
         </div>
-        <el-button type="danger" text>取消收藏</el-button>
+        <el-button type="danger" size="small">取消收藏</el-button>
       </div>
     </div>
     

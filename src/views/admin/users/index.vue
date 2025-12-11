@@ -105,18 +105,24 @@
         <el-table-column prop="createdAt" label="注册时间" width="170" />
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" type="primary" link @click="handleEdit(row)">
-              <el-icon><Edit /></el-icon>编辑
-            </el-button>
-            <el-button size="small" type="warning" link @click="handleResetPassword(row)">
-              <el-icon><Key /></el-icon>重置密码
-            </el-button>
-            <el-button size="small" type="success" link @click="showLoginLog(row)">
-              <el-icon><Clock /></el-icon>日志
-            </el-button>
-            <el-button size="small" type="danger" link @click="handleDelete(row)">
-              <el-icon><Delete /></el-icon>删除
-            </el-button>
+            <div class="action-buttons">
+              <div class="action-row">
+                <el-button size="small" type="primary" link @click="handleEdit(row)">
+                  <el-icon><Edit /></el-icon>编辑
+                </el-button>
+                <el-button size="small" type="success" link @click="showLoginLog(row)">
+                  <el-icon><Clock /></el-icon>日志
+                </el-button>
+              </div>
+              <div class="action-row">
+                <el-button size="small" type="warning" link @click="handleResetPassword(row)">
+                  <el-icon><Key /></el-icon>重置密码
+                </el-button>
+                <el-button size="small" type="danger" link @click="handleDelete(row)">
+                  <el-icon><Delete /></el-icon>删除
+                </el-button>
+              </div>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -456,6 +462,17 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+}
+
 .user-management-page {
   display: flex;
   flex-direction: column;

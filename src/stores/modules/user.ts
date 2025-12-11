@@ -340,6 +340,50 @@ export const useUserStore = defineStore('user', () => {
   }
 
   /**
+   * 修改密码
+   * @param oldPassword 旧密码
+   * @param newPassword 新密码
+   * @returns 是否修改成功
+   */
+  async function changePassword(oldPassword: string, newPassword: string): Promise<boolean> {
+    try {
+      // TODO: 实际开发中应调用后端修改密码接口
+      /*
+      const response = await fetch('/api/user/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${tokenType.value} ${token.value}`
+        },
+        body: JSON.stringify({ oldPassword, newPassword })
+      })
+      
+      if (response.ok) {
+        return true
+      } else {
+        const error = await response.json().catch(() => ({}))
+        throw new Error(error.message || '修改密码失败')
+      }
+      */
+      
+      // 模拟修改密码成功
+      // 实际项目中，这里应该调用真实的API接口
+      // 为了演示，这里只做简单的验证
+      if (!oldPassword || !newPassword || newPassword.length < 6) {
+        throw new Error('密码长度不能少于6位')
+      }
+      
+      // 模拟网络请求延迟
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      return true
+    } catch (error: any) {
+      console.error('修改密码失败:', error)
+      throw new Error(error.message || '修改密码失败，请稍后重试')
+    }
+  }
+
+  /**
    * 检查token是否即将过期（5分钟内）
    */
   function isTokenExpiringSoon(): boolean {
@@ -371,6 +415,7 @@ export const useUserStore = defineStore('user', () => {
     getUserInfo,
     refreshTokenFunc,
     init,
-    updateUserInfo
+    updateUserInfo,
+    changePassword
   }
 })

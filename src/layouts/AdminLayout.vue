@@ -72,7 +72,7 @@
                   <el-icon><User /></el-icon>个人信息
                 </el-dropdown-item>
                 <el-dropdown-item command="password">
-                  <el-icon><Lock /></el-icon>修改密码
+                  <el-icon><Lock /></el-icon>账号安全
                 </el-dropdown-item>
                 <el-dropdown-item command="portal">
                   <el-icon><House /></el-icon>返回前台
@@ -213,7 +213,7 @@ function handleUserCommand(command: string) {
       router.push('/portal/user/profile')
       break
     case 'password':
-      router.push('/portal/user/password')
+      router.push('/portal/user/settings')
       break
     case 'portal':
       router.push('/portal')

@@ -114,15 +114,17 @@
           <el-table-column prop="createTime" label="兑换时间" width="160" />
           <el-table-column label="操作" width="150" fixed="right">
             <template #default="{ row }">
-              <template v-if="row.status === 'pending'">
-                <el-button size="small" type="success" link @click="approveExchange(row)">通过</el-button>
-                <el-button size="small" type="danger" link @click="rejectExchange(row)">拒绝</el-button>
+                <div class="action-buttons">
+                  <template v-if="row.status === 'pending'">
+                    <el-button size="small" type="success" link @click="approveExchange(row)" class="action-btn">通过</el-button>
+                    <el-button size="small" type="danger" link @click="rejectExchange(row)" class="action-btn">拒绝</el-button>
+                  </template>
+                  <template v-else-if="row.status === 'approved'">
+                    <el-button size="small" type="primary" link @click="deliverExchange(row)" class="action-btn">发放</el-button>
+                  </template>
+                  <el-button size="small" link @click="viewExchangeDetail(row)" class="action-btn">详情</el-button>
+                </div>
               </template>
-              <template v-else-if="row.status === 'approved'">
-                <el-button size="small" type="primary" link @click="deliverExchange(row)">发放</el-button>
-              </template>
-              <el-button size="small" link @click="viewExchangeDetail(row)">详情</el-button>
-            </template>
           </el-table-column>
         </el-table>
       </el-card>
@@ -171,8 +173,10 @@
               </el-table-column>
               <el-table-column label="操作" width="120">
                 <template #default="{ row }">
-                  <el-button size="small" type="primary" link @click="adjustStock(row)">调整</el-button>
-                  <el-button size="small" link @click="viewStockHistory(row)">记录</el-button>
+                  <div class="action-buttons">
+                    <el-button size="small" type="primary" link @click="adjustStock(row)" class="action-btn">调整</el-button>
+                    <el-button size="small" link @click="viewStockHistory(row)" class="action-btn">记录</el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -268,15 +272,17 @@
           <el-table-column prop="createTime" label="下单时间" width="160" />
           <el-table-column label="操作" width="180" fixed="right">
             <template #default="{ row }">
-              <template v-if="row.status === 'pending'">
-                <el-button size="small" type="primary" link @click="processOrder(row)">处理</el-button>
+                <div class="action-buttons">
+                  <template v-if="row.status === 'pending'">
+                    <el-button size="small" type="primary" link @click="processOrder(row)" class="action-btn">处理</el-button>
+                  </template>
+                  <template v-else-if="row.status === 'toShip'">
+                    <el-button size="small" type="primary" link @click="shipOrder(row)" class="action-btn">发货</el-button>
+                  </template>
+                  <el-button size="small" link @click="viewOrderDetail(row)" class="action-btn">详情</el-button>
+                  <el-button v-if="row.status === 'pending'" size="small" type="danger" link class="action-btn">取消</el-button>
+                </div>
               </template>
-              <template v-else-if="row.status === 'toShip'">
-                <el-button size="small" type="primary" link @click="shipOrder(row)">发货</el-button>
-              </template>
-              <el-button size="small" link @click="viewOrderDetail(row)">详情</el-button>
-              <el-button v-if="row.status === 'pending'" size="small" type="danger" link>取消</el-button>
-            </template>
           </el-table-column>
         </el-table>
         
@@ -638,6 +644,26 @@ function viewOrderDetail(row: any) {
     margin-top: 16px;
     display: flex;
     gap: 8px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    align-items: flex-start;
+  }
+  
+  .action-btn {
+    padding: 2px 0;
+    margin: 0;
+    min-width: 60px;
+    text-align: left;
+    display: block;
+    line-height: 1.5;
+    height: auto;
   }
 }
 </style>

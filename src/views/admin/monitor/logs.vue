@@ -349,13 +349,14 @@ function saveArchiveSettings() {
   }
   
   .log-viewer {
-    background: #1e1e1e;
+    background: var(--color-bg-tertiary);
     border-radius: 8px;
     padding: 12px;
     max-height: 500px;
     overflow-y: auto;
     font-family: 'Consolas', 'Monaco', monospace;
     font-size: 13px;
+    border: 1px solid var(--color-border);
     
     .log-entry {
       padding: 6px 8px;
@@ -365,27 +366,28 @@ function saveArchiveSettings() {
       align-items: center;
       gap: 8px;
       
-      &:hover { background: rgba(255, 255, 255, 0.05); }
-      &.error { color: #f56c6c; }
-      &.warn { color: #e6a23c; }
-      &.info { color: #d4d4d4; }
-      &.debug { color: #909399; }
+      &:hover { background: var(--color-bg-secondary); }
+      &.error { color: var(--color-error); }
+      &.warn { color: var(--color-warning); }
+      &.info { color: var(--color-text-primary); }
+      &.debug { color: var(--color-text-tertiary); }
       
-      .log-time { color: #6a9955; min-width: 180px; }
+      .log-time { color: var(--color-info); min-width: 180px; }
       .log-level { min-width: 60px; }
-      .log-source { color: #569cd6; min-width: 60px; }
+      .log-source { color: var(--color-success); min-width: 60px; }
       .log-message { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     }
   }
   
   .log-detail-message, .log-stack-trace {
     margin-top: 16px;
-    h4 { margin-bottom: 8px; font-size: 14px; }
+    h4 { margin-bottom: 8px; font-size: 14px; color: var(--color-text-primary); }
     pre {
-      background: #1e1e1e;
-      color: #d4d4d4;
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-primary);
       padding: 12px;
       border-radius: 6px;
+      border: 1px solid var(--color-border);
       font-size: 12px;
       overflow-x: auto;
       max-height: 200px;

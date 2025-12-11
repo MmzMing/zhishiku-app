@@ -236,9 +236,9 @@
                     <span class="unlock-count">{{ achievement.unlockCount }} 人解锁</span>
                   </div>
                 </div>
-                <div class="achievement-actions">
-                  <el-button size="small" type="primary" link @click="showAchievementDialog(achievement)">编辑</el-button>
-                  <el-button size="small" type="danger" link>删除</el-button>
+                <div class="achievement-actions action-buttons">
+                  <el-button size="small" type="primary" link @click="showAchievementDialog(achievement)" class="action-btn">编辑</el-button>
+                  <el-button size="small" type="danger" link class="action-btn">删除</el-button>
                 </div>
               </div>
             </div>
@@ -752,6 +752,20 @@ function saveAchievement() {
       &.active { border-color: #409eff; background: #ecf5ff; }
       &:hover { border-color: #409eff; }
     }
+  }
+  
+  // 操作按钮统一样式
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 60px;
+  }
+  
+  .action-btn {
+    min-width: 60px;
+    padding: 4px 0;
+    margin: 0;
   }
 }
 </style>

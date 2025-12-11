@@ -67,10 +67,16 @@
                 <el-switch v-model="row.enabled" size="small" />
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="100">
+            <el-table-column label="操作" width="100" fixed="right">
               <template #default="{ row }">
-                <el-button size="small" type="primary" link @click="editRule(row)">编辑</el-button>
-                <el-button size="small" type="danger" link @click="deleteRule(row)">删除</el-button>
+                <div class="action-buttons">
+                    <el-button size="small" type="primary" link @click="editRule(row)" class="action-btn">
+                        <el-icon><EditIcon /></el-icon>编辑
+                      </el-button>
+                    <el-button size="small" type="danger" link @click="deleteRule(row)" class="action-btn">
+                        <el-icon><DeleteIcon /></el-icon>删除
+                      </el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -99,10 +105,16 @@
                 <el-switch v-model="row.enabled" size="small" />
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="100">
+            <el-table-column label="操作" width="80">
               <template #default="{ row }">
-                <el-button size="small" type="primary" link @click="editRule(row)">编辑</el-button>
-                <el-button size="small" type="danger" link @click="deleteRule(row)">删除</el-button>
+                <div class="action-buttons">
+                  <el-button size="small" type="primary" link @click="editRule(row)" class="action-btn">
+                    <el-icon><EditIcon /></el-icon>编辑
+                  </el-button>
+                  <el-button size="small" type="danger" link @click="deleteRule(row)" class="action-btn">
+                    <el-icon><DeleteIcon /></el-icon>删除
+                  </el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -259,7 +271,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { Plus, Coin, TrendCharts, ShoppingCart, UserFilled, Medal } from '@element-plus/icons-vue'
+import { Plus, Coin, TrendCharts, ShoppingCart, UserFilled, Medal, Edit as EditIcon, Delete as DeleteIcon } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 获取规则
@@ -358,6 +370,25 @@ function saveExpirySettings() {
 </script>
 
 <style scoped lang="scss">
+/* 紧凑操作栏样式 */
+:deep(.action-buttons.compact) {
+  .action-row {
+    gap: 2px;
+    margin-bottom: 2px;
+    .el-button {
+      padding: 0 8px;
+      font-size: 12px;
+      min-width: auto;
+    }
+  }
+}
+.action-buttons {
+  .action-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+}
 .points-rules-page {
   display: flex;
   flex-direction: column;
@@ -479,6 +510,26 @@ function saveExpirySettings() {
       }
     }
   }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  align-items: flex-start;
+}
+
+.action-btn {
+  padding: 2px 0;
+  margin: 0;
+  min-width: 80px;
+  text-align: left;
+  display: block;
+  line-height: 1.5;
+  height: auto;
 }
 
 @media (max-width: 1200px) {

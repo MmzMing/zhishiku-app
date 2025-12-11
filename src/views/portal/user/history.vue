@@ -2,7 +2,7 @@
   <div class="user-history">
     <div class="page-header">
       <h3>观看历史</h3>
-      <el-button type="danger" text @click="clearHistory">清空历史</el-button>
+      <el-button type="danger" size="small" @click="clearHistory">清空历史</el-button>
     </div>
     
     <div class="history-list">
@@ -15,7 +15,7 @@
           <h4>React 18 新特性详解 - 第{{ i }}集</h4>
           <p>观看至 {{ 30 + i * 10 }}% · {{ i }}小时前</p>
         </div>
-        <el-button type="primary" text>继续观看</el-button>
+        <el-button type="primary" size="small">继续观看</el-button>
       </div>
     </div>
   </div>

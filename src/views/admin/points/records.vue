@@ -115,8 +115,10 @@
             </el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
               <template #default="{ row }">
-                <el-button size="small" type="primary" link @click="viewDetail(row)">详情</el-button>
-                <el-button v-if="row.isAnomaly" size="small" type="danger" link @click="handleAnomaly(row)">处理</el-button>
+                <div class="action-buttons">
+                    <el-button size="small" type="primary" link @click="viewDetail(row)" class="action-btn">详情</el-button>
+                    <el-button v-if="row.isAnomaly" size="small" type="danger" link @click="handleAnomaly(row)" class="action-btn">处理</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -347,6 +349,25 @@ function confirmExport() {
 </script>
 
 <style scoped lang="scss">
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  align-items: flex-start;
+}
+
+.action-btn {
+  padding: 2px 0;
+  margin: 0;
+  min-width: 60px;
+  text-align: left;
+  display: block;
+  line-height: 1.5;
+  height: auto;
+}
 .points-records-page {
   display: flex;
   flex-direction: column;

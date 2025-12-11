@@ -51,7 +51,7 @@
                     <el-icon><User /></el-icon>个人信息
                   </el-dropdown-item>
                   <el-dropdown-item command="password">
-                    <el-icon><Lock /></el-icon>修改密码
+                    <el-icon><Lock /></el-icon>账号安全
                   </el-dropdown-item>
                   <el-dropdown-item command="admin" v-if="isAdmin">
                     <el-icon><Setting /></el-icon>后台管理
@@ -210,7 +210,7 @@ function handleUserCommand(command: string) {
       router.push('/portal/user/profile')
       break
     case 'password':
-      router.push('/portal/user/password')
+      router.push('/portal/user/settings')
       break
     case 'admin':
       router.push('/admin')

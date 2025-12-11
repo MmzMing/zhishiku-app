@@ -87,25 +87,33 @@
           </template>
         </el-table-column>
         <el-table-column prop="publishedAt" label="发布时间" width="170" />
-        <el-table-column label="操作" width="180" fixed="right">
-          <template #default="{ row }">
-            <el-button size="small" type="primary" link @click="$router.push(`/admin/blogs/edit/${row.id}`)">
-              <el-icon><Edit /></el-icon>编辑
-            </el-button>
-            <el-button v-if="row.status === 'pending'" size="small" type="success" link @click="handleAudit(row, 'approve')">
-              <el-icon><Check /></el-icon>通过
-            </el-button>
-            <el-button v-if="row.status === 'pending'" size="small" type="warning" link @click="handleAudit(row, 'reject')">
-              <el-icon><Close /></el-icon>拒绝
-            </el-button>
-            <el-button size="small" type="info" link @click="showSeoDialog(row)">
-              <el-icon><Promotion /></el-icon>SEO
-            </el-button>
-            <el-button size="small" type="danger" link @click="handleDelete(row)">
-              <el-icon><Delete /></el-icon>删除
-            </el-button>
-          </template>
-        </el-table-column>
+        <el-table-column label="操作" width="140" fixed="right">
+            <template #default="{ row }">
+              <div class="action-buttons compact">
+                <div class="action-row">
+                  <el-button size="small" type="primary" link @click="$router.push(`/admin/blogs/edit/${row.id}`)">
+                    <el-icon><Edit /></el-icon>编辑
+                  </el-button>
+                    <el-button size="small" type="info" link @click="handleSeo(row)">
+                      <el-icon><Promotion /></el-icon>SEO
+                    </el-button>
+                  </div>
+                <div class="action-row">
+                  <el-button size="small" type="success" link @click="handleAudit(row, 'approve')">
+                      <el-icon><Check /></el-icon>通过
+                    </el-button>
+                    <el-button size="small" type="warning" link @click="handleAudit(row, 'reject')">
+                      <el-icon><Close /></el-icon>拒绝
+                    </el-button>
+                  </div>
+                  <div class="action-row">
+                    <el-button size="small" type="danger" link @click="handleDelete(row)">
+                      <el-icon><Delete /></el-icon>删除
+                    </el-button>
+                  </div>
+              </div>
+            </template>
+          </el-table-column>
       </el-table>
       
       <div class="pagination-wrap">
@@ -206,7 +214,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { Search, Refresh, Edit, Delete, View, Star, ChatDotRound, Check, Close, Promotion } from '@element-plus/icons-vue'
+import { Search, Refresh, Edit, Delete, View as LogIcon, Star, ChatDotRound, Check, Close, Promotion } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { mockService } from '@/mock'
 import type { Blog } from '@/types/blog'
@@ -254,6 +262,10 @@ function handleReset() {
   queryParams.dateRange = null
   queryParams.pageNum = 1
   loadData()
+}
+
+function handleSeo(row: Blog) {
+  $router.push(`/admin/blogs/seo/${row.id}`)
 }
 
 async function handleDelete(row: Blog) {
@@ -354,6 +366,26 @@ onMounted(loadData)
 </script>
 
 <style scoped lang="scss">
+/* 紧凑操作栏样式 */
+:deep(.action-buttons.compact) {
+  .action-row {
+    gap: 2px;
+    margin-bottom: 2px;
+    .el-button {
+      padding: 0 8px;
+      font-size: 12px;
+      min-width: auto;
+    }
+  }
+}
+
+.action-buttons {
+  .action-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+}
 .blog-management-page {
   display: flex;
   flex-direction: column;

@@ -131,29 +131,31 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" type="primary" link @click="openPreview(row)">
-              <el-icon><VideoPlay /></el-icon>预览
-            </el-button>
-            <el-button size="small" type="primary" link @click="$router.push(`/admin/videos/edit/${row.id}`)">
-              <el-icon><Edit /></el-icon>编辑
-            </el-button>
-            <el-dropdown trigger="click" @command="(cmd: string) => handleMoreAction(cmd, row)">
-              <el-button size="small" type="info" link>
-                <el-icon><More /></el-icon>更多
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item command="copy">复制链接</el-dropdown-item>
-                  <el-dropdown-item command="stats">数据统计</el-dropdown-item>
-                  <el-dropdown-item command="logs">操作日志</el-dropdown-item>
-                  <el-dropdown-item v-if="row.status === 'published'" command="offline" divided>下架</el-dropdown-item>
-                  <el-dropdown-item v-else-if="row.status !== 'pending'" command="publish">发布</el-dropdown-item>
-                  <el-dropdown-item command="delete" divided style="color: #f56c6c">删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+            <div class="action-buttons">
+                <el-button size="small" type="success" link @click="openPreview(row)" class="action-btn">
+                  <el-icon><VideoPlay /></el-icon>预览
+                </el-button>
+                <el-button size="small" type="primary" link @click="$router.push(`/admin/videos/edit/${row.id}`)" class="action-btn">
+                  <el-icon><Edit /></el-icon>编辑
+                </el-button>
+                <el-dropdown trigger="click" @command="(cmd: string) => handleMoreAction(cmd, row)">
+                  <el-button size="small" type="warning" link class="action-btn">
+                    <el-icon><More /></el-icon>更多
+                  </el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item command="copy">复制链接</el-dropdown-item>
+                      <el-dropdown-item command="stats">数据统计</el-dropdown-item>
+                      <el-dropdown-item command="logs">操作日志</el-dropdown-item>
+                      <el-dropdown-item v-if="row.status === 'published'" command="offline" divided>下架</el-dropdown-item>
+                      <el-dropdown-item v-else-if="row.status !== 'pending'" command="publish">发布</el-dropdown-item>
+                      <el-dropdown-item command="delete" divided style="color: #f56c6c">删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
           </template>
         </el-table-column>
       </el-table>
@@ -658,12 +660,32 @@ onMounted(loadData)
 </script>
 
 <style scoped lang="scss">
-.video-management-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  
-  .filter-card {
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    align-items: flex-start;
+  }
+
+  .action-btn {
+    padding: 2px 0;
+    margin: 0;
+    min-width: 80px;
+    text-align: left;
+    display: block;
+    line-height: 1.5;
+    height: auto;
+  }
+
+  .video-management-page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    .filter-card {
     :deep(.el-form-item) {
       margin-bottom: 0;
     }

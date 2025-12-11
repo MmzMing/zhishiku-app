@@ -30,7 +30,7 @@
               </div>
             </div>
           </div>
-          <el-button type="primary" @click="$router.push('/portal/user/settings')">
+          <el-button type="primary" size="small" @click="$router.push('/portal/user/settings')">
             <el-icon><Edit /></el-icon>
             编辑资料
           </el-button>

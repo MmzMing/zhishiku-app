@@ -105,18 +105,22 @@
             <span v-else class="text-tertiary">-</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
-          <template #default="{ row }">
-            <template v-if="row.status === 'pending' || row.status === 'reviewing'">
-              <el-button size="small" type="primary" @click="handlePreview(row)">
-                <el-icon><VideoPlay /></el-icon>审核
-              </el-button>
-              <el-button size="small" type="success" @click="handleQuickApprove(row)">通过</el-button>
-              <el-button size="small" type="danger" @click="handleQuickReject(row)">驳回</el-button>
-            </template>
-            <template v-else>
-              <el-button size="small" type="info" link @click="handleViewLog(row)">查看日志</el-button>
-            </template>
+        <el-table-column label="操作" width="100" fixed="right">
+            <template #default="{ row }">
+              <div class="action-buttons video-actions">
+                <el-button size="small" type="primary" link @click="handlePreview(row)" class="action-btn">
+                  <el-icon><VideoPlay /></el-icon>审核
+                </el-button>
+                <el-button size="small" type="success" link @click="handleQuickApprove(row)" class="action-btn">
+                  <el-icon><Check /></el-icon>通过
+                </el-button>
+                <el-button size="small" type="danger" link @click="handleQuickReject(row)" class="action-btn">
+                  <el-icon><Close /></el-icon>驳回
+                </el-button>
+                <el-button size="small" type="info" link @click="handleViewLog(row)" class="action-btn">
+                  <el-icon><Clock /></el-icon>查看日志
+                </el-button>
+              </div>
           </template>
         </el-table-column>
       </el-table>
@@ -252,7 +256,7 @@
         <el-table-column prop="time" label="处理时间" width="160" />
         <el-table-column label="操作" width="100">
           <template #default="{ row }">
-            <el-button size="small" type="primary" link @click="handleAppeal(row)">申诉</el-button>
+            <el-button size="small" type="primary" link @click="handleAppeal(row)" class="action-btn">申诉</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -260,10 +264,39 @@
   </div>
 </template>
 
+<style scoped lang="scss">
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  align-items: flex-start;
+}
+
+.action-btn {
+  padding: 2px 0;
+  margin: 0;
+  min-width: 80px;
+  text-align: left;
+  display: block;
+  line-height: 1.5;
+  height: auto;
+}
+
+.video-actions {
+  text-align: left;
+  padding-left: 0;
+}
+</style>
+
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { 
-  Clock, View, CircleCheck, CircleClose, Aim, User, VideoPlay, Refresh, Warning
+  Clock, View, CircleCheck, CircleClose, Aim, User, VideoPlay, Refresh, Warning,
+  Check,
+  Close
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -496,6 +529,26 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.action-buttons {
+  .action-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.action-buttons.compact {
+  .action-row {
+    gap: 2px;
+  }
+  
+  .el-button {
+    padding: 0 8px;
+    font-size: 12px;
+    min-width: auto;
+    margin-right: 2px;
+  }
+}
 .video-audit-page {
   .audit-stats {
     display: grid;
@@ -676,5 +729,23 @@ onMounted(() => {
   .video-audit-page .audit-stats {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.video-actions {
+  text-align: left;
+  padding-left: 0;
+}
+
+.video-actions .action-row {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.video-actions .action-row .el-button {
+  margin-right: 12px;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 0;
 }
 </style>

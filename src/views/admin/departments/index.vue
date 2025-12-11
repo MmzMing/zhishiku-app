@@ -101,8 +101,10 @@
             <el-table-column prop="joinDate" label="加入时间" width="120" />
             <el-table-column label="操作" width="120">
               <template #default="{ row }">
-                <el-button size="small" type="primary" link>调岗</el-button>
-                <el-button size="small" type="danger" link>移除</el-button>
+                <div class="action-buttons">
+                  <el-button size="small" type="primary" link class="action-btn">调岗</el-button>
+                  <el-button size="small" type="danger" link class="action-btn">移除</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -468,6 +470,26 @@ function handleSubmit() {
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    align-items: flex-start;
+  }
+  
+  .action-btn {
+    padding: 2px 0;
+    margin: 0;
+    min-width: 60px;
+    text-align: left;
+    display: block;
+    line-height: 1.5;
+    height: auto;
   }
 }
 </style>

@@ -202,8 +202,10 @@
               </el-table-column>
               <el-table-column label="操作" width="120">
                 <template #default="{ row }">
-                  <el-button size="small" type="primary" link>详情</el-button>
-                  <el-button v-if="row.risk !== 'normal'" size="small" type="warning" link>处理</el-button>
+                  <div class="action-buttons">
+                    <el-button size="small" type="primary" link class="action-btn">详情</el-button>
+                    <el-button v-if="row.risk !== 'normal'" size="small" type="warning" link class="action-btn">处理</el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -296,8 +298,10 @@
               <el-table-column prop="createTime" label="生成时间" width="160" />
               <el-table-column label="操作" width="150" fixed="right">
                 <template #default="{ row }">
-                  <el-button size="small" type="primary" link @click="viewReport(row)">查看</el-button>
-                  <el-button size="small" link @click="downloadReport(row)">下载</el-button>
+                  <div class="action-buttons">
+                    <el-button size="small" type="primary" link @click="viewReport(row)" class="action-btn">查看</el-button>
+                    <el-button size="small" link @click="downloadReport(row)" class="action-btn">下载</el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -538,5 +542,19 @@ function fixIssue(issue: any) {
   .standards-list .standard-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--color-border); &:last-child { border-bottom: none; } }
   
   .diff-viewer { .diff-section { margin-bottom: 16px; h4 { margin-bottom: 8px; } pre { background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 6px; font-size: 12px; overflow-x: auto; &.before { border-left: 4px solid #f56c6c; } &.after { border-left: 4px solid #67c23a; } } } }
+  
+  // 操作按钮统一样式
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 60px;
+  }
+  
+  .action-btn {
+    min-width: 60px;
+    padding: 4px 0;
+    margin: 0;
+  }
 }
 </style>

@@ -24,11 +24,17 @@ html {
 
 body {
   min-height: 100vh;
-  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: var(--font-size-base, 14px);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-base);
   color: var(--color-text-primary);
   background-color: var(--color-bg-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: var(--letter-spacing-base);
 }
 
 a {
@@ -43,9 +49,265 @@ a {
 
 button {
   cursor: pointer;
-  border: none;
-  background: none;
   font-family: inherit;
+}
+
+/* 全局按钮边框样式 */
+.el-button {
+  border: 1px solid var(--color-border-base);
+  border-radius: var(--border-radius-base);
+  background-color: transparent;
+  min-width: 80px;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+/* 普通按钮悬停效果 */
+.el-button:hover:not(.is-disabled) {
+  border-color: var(--color-brand-400);
+  background-color: rgba(var(--color-brand-rgb), 0.05);
+  transform: translateY(-1px);
+}
+
+/* 普通按钮点击效果 */
+.el-button:active:not(.is-disabled) {
+  transform: translateY(0);
+  border-color: var(--color-brand-300);
+  background-color: rgba(var(--color-brand-rgb), 0.1);
+}
+
+/* 主要按钮特殊边框样式 */
+.el-button--primary {
+  border: 1px solid var(--color-brand-200);
+  color: var(--color-brand-300);
+  background-color: rgba(var(--color-brand-rgb), 0.05);
+  padding: 8px 16px;
+}
+
+/* 主要按钮悬停效果 */
+.el-button--primary:hover:not(.is-disabled) {
+  border-color: var(--color-brand-400);
+  background-color: var(--color-brand-400);
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(var(--color-brand-rgb), 0.2);
+  transition: all 0.2s ease;
+}
+
+/* 文本按钮特殊边框样式 */
+.el-button--text {
+  border: 1px solid transparent;
+  min-width: 60px;
+  white-space: nowrap;
+  padding: 8px 16px;
+  color: var(--color-text-primary);
+}
+
+/* 文本按钮悬停效果 */
+.el-button--text:hover:not(.is-disabled) {
+  border-color: var(--color-brand-300);
+  background-color: rgba(var(--color-brand-rgb), 0.05);
+  color: var(--color-brand-400);
+  box-shadow: 0 0 0 2px rgba(var(--color-brand-rgb), 0.1);
+  transition: all 0.2s ease;
+}
+
+/* 警告按钮特殊边框样式 */
+.el-button--warning {
+  border: 1px solid rgba(var(--color-warning-rgb), 0.6);
+  background-color: rgba(var(--color-warning-rgb), 0.05);
+  color: rgba(var(--color-warning-rgb), 0.8);
+  padding: 8px 16px;
+}
+
+/* 警告按钮悬停效果 */
+.el-button--warning:hover:not(.is-disabled) {
+  border-color: var(--color-warning);
+  background-color: var(--color-warning);
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(var(--color-warning-rgb), 0.2);
+  transition: all 0.2s ease;
+}
+
+/* 危险按钮特殊边框样式 */
+.el-button--danger {
+  border: 1px solid rgba(var(--color-error-rgb), 0.6);
+  background-color: rgba(var(--color-error-rgb), 0.05);
+  color: rgba(var(--color-error-rgb), 0.8);
+  padding: 8px 16px;
+}
+
+/* 危险按钮悬停效果 */
+.el-button--danger:hover:not(.is-disabled) {
+  border-color: var(--color-error);
+  background-color: var(--color-error);
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(var(--color-error-rgb), 0.2);
+  transition: all 0.2s ease;
+}
+
+/* 成功按钮特殊边框样式 */
+.el-button--success {
+  border: 1px solid rgba(var(--color-success-rgb), 0.6);
+  background-color: rgba(var(--color-success-rgb), 0.05);
+  color: rgba(var(--color-success-rgb), 0.8);
+  padding: 8px 16px;
+}
+
+/* 成功按钮悬停效果 */
+.el-button--success:hover:not(.is-disabled) {
+  border-color: var(--color-success);
+  background-color: var(--color-success);
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(var(--color-success-rgb), 0.2);
+  transition: all 0.2s ease;
+}
+
+/* 禁用按钮样式 */
+.el-button.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: var(--color-border-base);
+}
+
+/* 主要禁用按钮 */
+.el-button--primary.is-disabled {
+  border-color: var(--color-border-base);
+  color: var(--color-text-disabled);
+  background-color: transparent;
+}
+
+/* 警告禁用按钮 */
+.el-button--warning.is-disabled {
+  border-color: var(--color-border-base);
+  color: var(--color-text-disabled);
+  background-color: transparent;
+}
+
+/* 危险禁用按钮 */
+.el-button--danger.is-disabled {
+  border-color: var(--color-border-base);
+  color: var(--color-text-disabled);
+  background-color: transparent;
+}
+
+.el-button--success.is-disabled {
+  border-color: var(--color-border-base);
+  color: var(--color-text-disabled);
+  background-color: transparent;
+}
+
+/* 暗黑主题下的按钮样式 */
+[data-theme="dark"] {
+  .el-button {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s ease;
+  }
+  
+  .el-button:hover:not(.is-disabled) {
+    border-color: var(--color-brand-400);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+  }
+  
+  .el-button--primary {
+    border-color: var(--color-brand-400);
+    color: var(--color-brand-400);
+    background-color: rgba(var(--color-brand-rgb), 0.1);
+  }
+  
+  .el-button--primary:hover:not(.is-disabled) {
+    border-color: var(--color-brand-400);
+    background-color: var(--color-brand-400);
+    color: #ffffff;
+  }
+  
+  .el-button--text {
+    border-color: transparent;
+    color: #ffffff;
+    background-color: transparent;
+  }
+  
+  .el-button--text:hover:not(.is-disabled) {
+    border-color: var(--color-brand-400);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .el-button--warning {
+    border-color: rgba(var(--color-warning-rgb), 0.3);
+    color: var(--color-warning);
+    background-color: rgba(var(--color-warning-rgb), 0.1);
+  }
+  
+  .el-button--warning:hover:not(.is-disabled) {
+    border-color: var(--color-warning);
+    background-color: var(--color-warning);
+    color: #ffffff;
+  }
+  
+  .el-button--danger {
+    border-color: rgba(var(--color-error-rgb), 0.3);
+    color: var(--color-error);
+    background-color: rgba(var(--color-error-rgb), 0.1);
+  }
+  
+  .el-button--danger:hover:not(.is-disabled) {
+    border-color: var(--color-error);
+    background-color: var(--color-error);
+    color: #ffffff;
+  }
+  
+  .el-button--success {
+    border-color: rgba(var(--color-success-rgb), 0.3);
+    color: var(--color-success);
+    background-color: rgba(var(--color-success-rgb), 0.1);
+  }
+  
+  .el-button--success:hover:not(.is-disabled) {
+    border-color: var(--color-success);
+    background-color: var(--color-success);
+    color: #ffffff;
+  }
+  
+  /* 暗黑主题下禁用按钮 */
+  .el-button.is-disabled {
+    border-color: rgba(255, 255, 255, 0.1);
+    opacity: 0.5;
+    background-color: transparent;
+  }
+  
+  .el-button--primary.is-disabled {
+    color: rgba(255, 255, 255, 0.4);
+  }
+  
+  .el-button--warning.is-disabled {
+    color: rgba(var(--color-warning-rgb), 0.4);
+  }
+  
+  .el-button--danger.is-disabled {
+    color: rgba(255, 87, 87, 0.4);
+  }
+  
+  .el-button--success.is-disabled {
+    color: rgba(var(--color-success-rgb), 0.4);
+  }
+}
+
+/* 响应式按钮样式调整 */
+@media (max-width: 768px) {
+  .el-button {
+    min-width: 60px;
+    padding: 6px 12px;
+    font-size: var(--font-size-sm);
+  }
+  
+  .el-button--text {
+    min-width: 40px;
+    padding: 6px 8px;
+  }
 }
 
 img,
@@ -65,6 +327,22 @@ textarea,
 select {
   font-family: inherit;
   font-size: inherit;
+  font-weight: inherit;
+}
+
+// 等宽字体用于代码和数字
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-family-mono);
+}
+
+// 标题样式增强
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-title);
+  letter-spacing: calc(var(--letter-spacing-base) * 0.8);
 }
 
 // ========== 滚动条样式 ==========
@@ -424,9 +702,11 @@ html[data-theme="dark"] {
     .el-menu-item,
     .el-sub-menu__title {
       color: var(--el-text-color-primary);
+      transition: all 0.2s ease;
       
       &:hover {
-        background-color: #2d2d2d;
+        background-color: #3d3d3d;
+        border-left: 3px solid var(--el-color-primary);
       }
       
       &.is-active {
@@ -438,17 +718,42 @@ html[data-theme="dark"] {
   .el-dropdown-menu {
     background-color: var(--el-bg-color-overlay, #242424);
     border-color: var(--el-border-color, #3a3a3a);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
     
     .el-dropdown-menu__item {
       color: var(--el-text-color-regular);
+      transition: all 0.2s ease;
       
       &:hover {
-        background-color: #2d2d2d;
+        background-color: #3d3d3d;
         color: var(--el-color-primary);
+        border-left: 3px solid var(--el-color-primary);
       }
     }
   }
   
+  /* 筛选下拉框样式 */
+  .el-select-dropdown {
+    background-color: var(--el-bg-color-overlay, #242424);
+    border-color: var(--el-border-color, #3a3a3a);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .el-select-dropdown__item {
+    color: var(--el-text-color-regular);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: #3d3d3d;
+      color: var(--el-color-primary);
+      border-left: 3px solid var(--el-color-primary);
+    }
+    
+    &.selected {
+      color: var(--el-color-primary);
+    }
+  }
+
   .el-pagination {
     --el-pagination-bg-color: #1a1a1a;
     --el-pagination-button-bg-color: #242424;
