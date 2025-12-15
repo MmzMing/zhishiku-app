@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+  <!-- 渐变背景 -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c3cfe2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="800" height="400" fill="url(#bgGradient)" />
+  
+  <!-- 装饰元素 -->
+  <circle cx="200" cy="200" r="60" fill="#4285f4" opacity="0.8" />
+  <rect x="400" y="170" width="200" height="60" fill="#34a853" opacity="0.8" rx="8" />
+  <rect x="300" y="120" width="100" height="160" fill="#fbbc05" opacity="0.8" rx="8" />
+  <rect x="550" y="120" width="80" height="160" fill="#ea4335" opacity="0.8" rx="8" />
+  
+  <!-- 点缀元素 -->
+  <circle cx="100" cy="100" r="10" fill="#4285f4" opacity="0.5" />
+  <circle cx="700" cy="300" r="15" fill="#34a853" opacity="0.5" />
+  <circle cx="650" cy="100" r="8" fill="#fbbc05" opacity="0.5" />
+  <circle cx="150" cy="300" r="12" fill="#ea4335" opacity="0.5" />
+</svg>

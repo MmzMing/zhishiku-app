@@ -4,6 +4,7 @@ import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+// import viteImagemin from 'vite-plugin-imagemin' // 暂时注释掉，等待安装成功
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -23,6 +24,36 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
       dts: 'src/components.d.ts',
     }),
+    /*
+    // 图片压缩插件 (暂时注释掉，等待安装成功)
+    viteImagemin({
+      gifsicle: {
+        optimizationLevel: 7,
+        interlaced: false
+      },
+      optipng: {
+        optimizationLevel: 7
+      },
+      mozjpeg: {
+        quality: 85
+      },
+      pngquant: {
+        quality: [0.8, 0.9],
+        speed: 4
+      },
+      svgo: {
+        plugins: [
+          {
+            name: 'removeViewBox'
+          },
+          {
+            name: 'removeEmptyAttrs',
+            active: false
+          }
+        ]
+      }
+    }),
+    */
   ],
   resolve: {
     alias: {

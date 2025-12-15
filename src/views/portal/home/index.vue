@@ -141,7 +141,7 @@
             @click="$router.push(`/portal/videos/${video.id}`)"
           >
             <div class="video-cover">
-              <img :src="video.cover" :alt="video.title" />
+              <img v-lazy="video.cover" :alt="video.title" />
               <span class="video-duration">{{ formatDuration(video.duration) }}</span>
               <div class="video-play-mask">
                 <el-icon :size="48"><VideoPlay /></el-icon>
@@ -154,7 +154,7 @@
                 <span><el-icon><Star /></el-icon> {{ formatCount(video.likeCount) }}</span>
               </div>
               <div class="video-author">
-                <el-avatar :size="24" :src="video.author.avatar" />
+                <el-avatar :size="24" :src="video.author.avatar" v-lazy />
                 <span>{{ video.author.nickname }}</span>
               </div>
             </div>
@@ -184,7 +184,7 @@
             @click="$router.push(`/portal/blogs/${blog.id}`)"
           >
             <div class="blog-cover" v-if="blog.cover">
-              <img :src="blog.cover" :alt="blog.title" />
+              <img v-lazy="blog.cover" :alt="blog.title" />
             </div>
             <div class="blog-content">
               <div class="blog-tags">
@@ -201,9 +201,9 @@
               <p class="blog-summary">{{ blog.summary }}</p>
               <div class="blog-footer">
                 <div class="blog-author">
-                  <el-avatar :size="28" :src="blog.author.avatar" />
-                  <span>{{ blog.author.nickname }}</span>
-                </div>
+                <el-avatar :size="24" :src="blog.author.avatar" v-lazy />
+                <span>{{ blog.author.nickname }}</span>
+              </div>
                 <div class="blog-stats">
                   <span><el-icon><View /></el-icon> {{ formatCount(blog.readCount) }}</span>
                   <span><el-icon><ChatDotRound /></el-icon> {{ blog.commentCount }}</span>
