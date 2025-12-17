@@ -486,11 +486,36 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  scrollBehavior(_to, _from, savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
+    // 如果有保存的位置，优先使用保存的位置
     if (savedPosition) {
-      return savedPosition
-    } else {
-      return { top: 0 }
+      return {
+        ...savedPosition,
+        behavior: 'smooth'
+      }
+    }
+    
+    // 如果是相同页面的查询参数变化，保持当前滚动位置
+    if (to.path === from.path && JSON.stringify(to.query) !== JSON.stringify(from.query)) {
+      return false // 禁止滚动
+    }
+    
+    // 如果目标路由有锚点，滚动到锚点位置
+    if (to.hash) {
+      const element = document.querySelector(to.hash)
+      if (element) {
+        return {
+          el: to.hash,
+          behavior: 'smooth',
+          block: 'start'
+        }
+      }
+    }
+    
+    // 默认滚动到顶部，使用平滑滚动
+    return {
+      top: 0,
+      behavior: 'smooth'
     }
   }
 })

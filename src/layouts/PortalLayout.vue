@@ -120,13 +120,15 @@
           </div>
         </div>
         
-        <div class="footer-bottom">
-          <p>&copy; {{ currentYear }} 知识库学习平台. All rights reserved.</p>
-          <div class="footer-social">
-            <a href="#"><el-icon :size="20"><ChatDotRound /></el-icon></a>
-            <a href="#"><el-icon :size="20"><Connection /></el-icon></a>
-          </div>
+      <div class="footer-bottom">
+        <div class="footer-left">
+          <SiteStats :no-border="true" />
         </div>
+        <div class="footer-social">
+          <a href="#"><el-icon :size="20"><ChatDotRound /></el-icon></a>
+          <a href="#"><el-icon :size="20"><Connection /></el-icon></a>
+        </div>
+      </div>
       </div>
     </footer>
     
@@ -168,6 +170,7 @@ import {
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user'
 import ThemeToggle from '@/components/base/ThemeToggle.vue'
+import SiteStats from '@/components/SiteStats/SiteStats.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -238,17 +241,33 @@ async function handleLogout() {
   }
 }
 
-// 滚动监听
-function handleScroll() {
-  isScrolled.value = window.scrollY > 50
+// 防抖函数
+function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null
+  
+  return function executedFunction(...args: Parameters<T>): void {
+    const later = () => {
+      timeout = null
+      func(...args)
+    }
+    
+    if (timeout !== null) {
+      clearTimeout(timeout)
+    }
+    timeout = setTimeout(later, wait)
+  }
 }
 
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
+// 滚动监听，使用防抖优化
+const debouncedHandleScroll = debounce(() => {
+  isScrolled.value = window.scrollY > 50
+}, 100)
 
+onMounted(() => {
+  window.addEventListener('scroll', debouncedHandleScroll)
+})
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('scroll', debouncedHandleScroll)
 })
 </script>
 
@@ -383,6 +402,8 @@ onUnmounted(() => {
 .portal-footer {
   background: var(--color-bg-primary);
   border-top: 1px solid var(--color-border);
+  position: relative;
+  z-index: 100; // 确保在fixed背景图片之上显示
   
   .footer-container {
     max-width: 1400px;
@@ -445,11 +466,11 @@ onUnmounted(() => {
   }
   
   .footer-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 24px;
-    border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
     
     p {
       font-size: 13px;
@@ -469,6 +490,16 @@ onUnmounted(() => {
         }
       }
     }
+  }
+  
+  .footer-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  .site-stats-container {
+    flex: 1;
+    min-width: 300px;
   }
 }
 
@@ -544,6 +575,7 @@ onUnmounted(() => {
       flex-wrap: wrap;
       gap: 32px;
     }
+
   }
 }
 

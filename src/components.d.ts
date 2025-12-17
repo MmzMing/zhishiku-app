@@ -75,8 +75,10 @@ declare module 'vue' {
     Optimized3DCarousel: typeof import('./components/Optimized3DCarousel/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SiteStats: typeof import('./components/SiteStats/SiteStats.vue')['default']
     TableSkeleton: typeof import('./components/Skeleton/TableSkeleton.vue')['default']
     ThemeToggle: typeof import('./components/base/ThemeToggle.vue')['default']
+    TypewriterEffect: typeof import('./components/base/TypewriterEffect.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

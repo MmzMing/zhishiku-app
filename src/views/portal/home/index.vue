@@ -26,7 +26,6 @@
           </el-input>
         </div>
         <div class="hero-main-tags">
-          <span>热门搜索：</span>
           <el-tag 
             v-for="tag in hotTags" 
             :key="tag" 
@@ -36,26 +35,12 @@
             {{ tag }}
           </el-tag>
         </div>
-        <div class="hero-main-stats">
-          <div class="stat-item">
-            <span class="stat-value">{{ stats.videos }}+</span>
-            <span class="stat-label">视频教程</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ stats.blogs }}+</span>
-            <span class="stat-label">技术博客</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ stats.users }}+</span>
-            <span class="stat-label">注册用户</span>
-          </div>
-        </div>
+        <!-- 统计数据已移除 -->
       </div>
       
       <!-- 向下箭头按钮 -->
       <div class="scroll-down-arrow" @click="scrollToContent">
         <el-icon :size="32" class="arrow-icon"><ArrowDown /></el-icon>
-        <span class="arrow-text">向下滚动</span>
       </div>
     </section>
 
@@ -67,7 +52,16 @@
       class="tech-carousel-section"
     >
       <div class="section-container">
-        <h2 class="carousel-title">海量视频教程、技术博客，助你快速提升技能</h2>
+        <h2 class="carousel-title">
+          <TypewriterEffect 
+            :text-array="[
+              '书山有路勤为径，学海无涯苦作舟',
+              '黑发不知勤学早，白首方悔读书迟',
+              '学而不思则罔，思而不学则殆',
+              '读书破万卷，下笔如有神'
+            ]"
+          />
+        </h2>
         
         <!-- 三图轮播区域 -->
         <div class="carousel-wrapper">
@@ -82,15 +76,8 @@
               @mouseenter="stopAutoPlay"
               @mouseleave="startAutoPlay"
             >
-              <div class="carousel-item-content">
-                <el-icon :size="getIconSize(index)"><component :is="category.icon" /></el-icon>
-                <span class="carousel-item-name">{{ category.name }}</span>
-                <span 
-                  v-if="index === visibleCenterIndex" 
-                  class="carousel-item-desc"
-                >
-                  {{ category.desc }}
-                </span>
+                  <div class="carousel-item-content">
+                <!-- 移除了图标和文字标签，仅保留图片背景 -->
               </div>
             </div>
           </div>
@@ -113,7 +100,7 @@
               <div class="selector-icon" :style="{ background: index === currentIndex ? cat.color : '' }">
                 <el-icon :size="20"><component :is="cat.icon" /></el-icon>
               </div>
-              <span class="selector-name">{{ cat.name }}</span>
+              {{ cat.name }}
             </div>
           </div>
         </div>
@@ -141,8 +128,8 @@
             @click="$router.push(`/portal/videos/${video.id}`)"
           >
             <div class="video-cover">
-              <img v-lazy="video.cover" :alt="video.title" />
-              <span class="video-duration">{{ formatDuration(video.duration) }}</span>
+              <img :src="video.cover" :alt="video.title" />
+              {{ formatDuration(video.duration) }}
               <div class="video-play-mask">
                 <el-icon :size="48"><VideoPlay /></el-icon>
               </div>
@@ -150,12 +137,12 @@
             <div class="video-info">
               <h3 class="video-title">{{ video.title }}</h3>
               <div class="video-meta">
-                <span><el-icon><View /></el-icon> {{ formatCount(video.playCount) }}</span>
-                <span><el-icon><Star /></el-icon> {{ formatCount(video.likeCount) }}</span>
-              </div>
+          <el-icon><View /></el-icon> {{ formatCount(video.playCount) }}
+          <el-icon><Star /></el-icon> {{ formatCount(video.likeCount) }}
+        </div>
               <div class="video-author">
-                <el-avatar :size="24" :src="video.author.avatar" v-lazy />
-                <span>{{ video.author.nickname }}</span>
+                <el-avatar :size="24" :src="video.author.avatar" />
+                {{ video.author.nickname }}
               </div>
             </div>
           </div>
@@ -184,7 +171,7 @@
             @click="$router.push(`/portal/blogs/${blog.id}`)"
           >
             <div class="blog-cover" v-if="blog.cover">
-              <img v-lazy="blog.cover" :alt="blog.title" />
+              <img :src="blog.cover" :alt="blog.title" />
             </div>
             <div class="blog-content">
               <div class="blog-tags">
@@ -201,13 +188,13 @@
               <p class="blog-summary">{{ blog.summary }}</p>
               <div class="blog-footer">
                 <div class="blog-author">
-                <el-avatar :size="24" :src="blog.author.avatar" v-lazy />
-                <span>{{ blog.author.nickname }}</span>
-              </div>
-                <div class="blog-stats">
-                  <span><el-icon><View /></el-icon> {{ formatCount(blog.readCount) }}</span>
-                  <span><el-icon><ChatDotRound /></el-icon> {{ blog.commentCount }}</span>
+                  <el-avatar :size="28" :src="blog.author.avatar" />
+                  {{ blog.author.nickname }}
                 </div>
+                <div class="blog-meta">
+            <el-icon><View /></el-icon> {{ formatCount(blog.readCount) }}
+            <el-icon><ChatDotRound /></el-icon> {{ blog.commentCount }}
+          </div>
               </div>
             </div>
           </div>
@@ -247,6 +234,7 @@ import { ElMessage } from 'element-plus'
 import { blogApi, videoApi } from '@/services/api'
 import type { Video } from '@/types/video'
 import type { Blog } from '@/types/blog'
+import TypewriterEffect from '@/components/base/TypewriterEffect.vue'
 
 const router = useRouter()
 
@@ -254,6 +242,8 @@ const router = useRouter()
 const fullscreenHeroRef = ref<HTMLElement | null>(null)
 const mainContentRef = ref<HTMLElement | null>(null)
 const carouselTrackRef = ref<HTMLElement | null>(null)
+// 视差滚动相关ref
+const isParallaxActive = ref(false)
 
 // 状态
 const searchKeyword = ref('')
@@ -346,8 +336,16 @@ function getCarouselItemStyle(index: number) {
   const opacity = 1 - Math.abs(positionIndex) * 0.3 // 透明度，离中心越远越透明
   const zIndex = 10 - Math.abs(positionIndex) // 层级，离中心越远越低
   
+  // 使用public/Amazing目录下的图片作为背景
+  const imageNames = ['1.jpg', '2.jpg', '3.png', '4.jpeg', '5.png', '7952f8a97a3bc110fd1bee57f087f4fe.jpg']
+  const imageIndex = item.originalIndex % imageNames.length
+  const backgroundImage = `url('/Amazing/${imageNames[imageIndex]}')`
+  
   return {
-    background: item.color,
+    backgroundImage: backgroundImage,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     transform: `translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
     opacity: opacity,
     zIndex: zIndex
@@ -514,6 +512,47 @@ function scrollToContent() {
   })
 }
 
+// 处理视差滚动效果
+function handleParallaxScroll() {
+  if (!mainContentRef.value) return;
+  
+  // 获取滚动位置
+  const scrollY = window.scrollY;
+  const windowHeight = window.innerHeight;
+  
+  // 当滚动超过首屏高度的80%时，激活视差效果
+  if (scrollY > windowHeight * 0.3 && !isParallaxActive.value) {
+      isParallaxActive.value = true;
+    }
+  
+  // 视差滚动效果：根据滚动位置调整主内容的透明度和位移
+  if (isParallaxActive.value) {
+    const parallaxElements = mainContentRef.value.querySelectorAll('section');
+    
+    parallaxElements.forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      const elementTop = rect.top;
+      const elementHeight = rect.height;
+      
+      // 计算元素相对于视口的位置比例
+      const scrollPosition = (windowHeight - elementTop) / (windowHeight + elementHeight);
+      
+      // 仅在元素进入视口时应用效果
+      if (scrollPosition > 0 && scrollPosition < 1) {
+        // 计算视差因子（0.2表示元素移动速度是滚动速度的20%）
+        const parallaxFactor = 0.2;
+        const translateY = (1 - scrollPosition) * parallaxFactor * elementHeight;
+        
+        // 应用变换效果
+        (element as HTMLElement).style.transform = `translateY(${translateY}px)`;
+        // 同时添加淡入效果
+        // 让元素在页面中间位置就达到完全不透明
+          (element as HTMLElement).style.opacity = `${Math.min(1, scrollPosition * 3)}`;
+      }
+    });
+  }
+}
+
 // 功能特点
 const features = [
   { title: '海量资源', desc: '覆盖前端、后端、运维等多个领域的优质内容', icon: Files, color: '#667eea' },
@@ -586,6 +625,17 @@ onMount(() => {
     window.addEventListener('mouseup', handleMouseUp)
   }
   
+  // 添加滚动事件监听器以实现视差效果
+  window.addEventListener('scroll', handleParallaxScroll)
+  
+  // 初始化视差效果样式
+  if (mainContentRef.value) {
+    const sections = mainContentRef.value.querySelectorAll('section');
+    sections.forEach((section) => {
+      (section as HTMLElement).style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+    });
+  }
+  
   // 启动自动轮播
   startAutoPlay()
 })
@@ -601,6 +651,9 @@ onUnMount(() => {
     window.removeEventListener('mousemove', handleMouseMove)
     window.removeEventListener('mouseup', handleMouseUp)
   }
+  
+  // 移除滚动事件监听器
+  window.removeEventListener('scroll', handleParallaxScroll)
 })
 </script>
 
@@ -661,9 +714,9 @@ onUnMount(() => {
   
   // 背景图片
   .hero-background {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    background: url('/picture/preview.jpg') center/cover no-repeat;
+    background: url('/picture/preview.jpg') center/cover no-repeat fixed;
     z-index: 0;
   }
   
@@ -863,30 +916,44 @@ onUnMount(() => {
 
 // 主内容区域
 .main-content {
+  position: relative;
   background: var(--color-bg-primary);
+  z-index: 1; // 确保内容在背景图片之上
 }
 
 // 技术分类轮播区域
-.tech-carousel-section {
-  padding: 60px 24px;
-  background: var(--color-bg-primary);
-  overflow: hidden;
-  
-  .carousel-title {
-    text-align: center;
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    margin-bottom: 48px;
-  }
+  .tech-carousel-section {
+    padding: 60px 24px;
+    background: var(--color-bg-primary);
+    overflow: hidden;
+    
+    .carousel-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 48px;
+      margin-left: auto;
+      margin-right: auto;
+    }
   
   // 轮播包裹器
   .carousel-wrapper {
     position: relative;
     height: 450px;
-    margin-bottom: 40px;
+    margin-bottom: 2.5px;
     overflow: hidden;
     perspective: 1500px; // 增加透视距离，增强3D效果
+  }
+  
+  // 轮播项描述样式
+  .carousel-item-desc {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 10px;
+    display: block;
+    color: #fff;
+    text-align: center;
   }
   
   // 轮播轨道
@@ -923,6 +990,9 @@ onUnMount(() => {
     justify-content: center;
     align-items: center;
     user-select: none; // 防止拖拽时选中文本
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     
     .carousel-item-content {
       display: flex;
@@ -941,14 +1011,6 @@ onUnMount(() => {
       font-weight: 600;
       margin-top: 16px;
     }
-    
-    .carousel-item-desc {
-      font-size: 16px;
-      opacity: 0.9;
-      margin-top: 16px;
-      max-width: 280px;
-      line-height: 1.5;
-    }
   }
   
   // 底部分类选择器
@@ -957,7 +1019,7 @@ onUnMount(() => {
     max-width: 800px;
     margin: 0 auto;
     overflow: hidden;
-    padding: 16px 0;
+    padding: 2px 0;
     
     &::before,
     &::after {
@@ -1053,6 +1115,7 @@ onUnMount(() => {
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
+    opacity: 1;
     transition: all 0.3s;
     
     &:hover {

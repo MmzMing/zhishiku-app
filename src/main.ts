@@ -8,7 +8,8 @@ import App from './App.vue'
 import router from './router'
 import pinia from './stores'
 import './styles/global.scss'
-import { setupLazyLoadDirective } from './directives/lazyload'
+// 导入自定义指令
+import directives from './directives'
 
 // 创建应用实例
 const app = createApp(App)
@@ -19,9 +20,7 @@ app.use(router)
 app.use(ElementPlus, {
   locale: zhCn,
 })
-
-// 注册懒加载指令
-setupLazyLoadDirective(app)
+app.use(directives) // 注册自定义指令
 
 // 挂载应用
 app.mount('#app')
