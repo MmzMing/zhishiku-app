@@ -30,11 +30,11 @@
 .admin-dashboard-page {
   :deep(.el-card) {
     background-color: var(--color-bg-secondary);
-    border-color: var(--color-border);
+    border: none;
     
     .el-card__header {
       background-color: var(--color-bg-secondary);
-      border-bottom-color: var(--color-border);
+      border-bottom: none;
       color: var(--color-text-primary);
     }
     

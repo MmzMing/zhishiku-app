@@ -73,7 +73,7 @@ export const mockVideos: Video[] = Array.from({ length: 20 }, (_, i) => ({
   id: `video-${i + 1}`,
   title: `Vue 3 完整教程 第${i + 1}集 - ${['组合式API', '响应式原理', 'Pinia状态管理', '路由配置', '组件通信'][i % 5]}`,
   description: `这是一个关于Vue 3的详细教程视频，本集主要讲解${['组合式API的使用方法', '响应式系统的底层原理', 'Pinia状态管理的最佳实践', 'Vue Router的高级配置', '组件之间的各种通信方式'][i % 5]}。`,
-  cover: `https://picsum.photos/seed/video${i + 1}/400/225`,
+  cover: '/default/fileDefaultPc.jpg',
   url: `https://example.com/videos/video-${i + 1}.mp4`,
   duration: 600 + Math.floor(Math.random() * 1200),
   categoryId: 'cat-1',
@@ -81,7 +81,7 @@ export const mockVideos: Video[] = Array.from({ length: 20 }, (_, i) => ({
   tags: ['Vue 3', 'TypeScript', '前端'][i % 3] ? ['Vue 3', 'TypeScript'] : ['React', 'JavaScript'],
   author: {
     id: '1',
-    nickname: '技术大牛',
+    nickname: '明子哥',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=teacher',
   },
   playCount: Math.floor(Math.random() * 10000) + 1000,
@@ -114,13 +114,13 @@ export const mockBlogs: Blog[] = Array.from({ length: 30 }, (_, i) => ({
 
 更多内容...`,
   contentHtml: '<h1>标题</h1><p>这是博客的正文内容...</p>',
-  cover: `https://picsum.photos/seed/blog${i + 1}/800/400`,
+  cover: '/default/fileDefaultPc.jpg',
   categoryId: 'cat-' + ((i % 5) + 1),
   categoryName: ['前端开发', '后端开发', 'DevOps', '数据库', '架构设计'][i % 5],
   tags: [['Vue', 'JavaScript'], ['React', 'TypeScript'], ['Node.js', 'Express'], ['MySQL', 'Redis'], ['Docker', 'K8s']][i % 5],
   author: {
     id: String((i % 3) + 1),
-    nickname: ['技术大牛', '前端小王', '后端老李'][i % 3],
+    nickname: ['明子哥', '沙雕墩能', '沙雕肥华'][i % 3],
     avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=author${i % 3}`,
   },
   readCount: Math.floor(Math.random() * 5000) + 500,

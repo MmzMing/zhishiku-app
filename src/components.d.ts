@@ -12,7 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BaseSkeleton: typeof import('./components/Skeleton/BaseSkeleton.vue')['default']
+    BlogCard: typeof import('./components/home/BlogCard.vue')['default']
+    BlogSection: typeof import('./components/home/BlogSection.vue')['default']
     CardSkeleton: typeof import('./components/Skeleton/CardSkeleton.vue')['default']
+    CategoryCarousel: typeof import('./components/home/CategoryCarousel.vue')['default']
     DebounceForm: typeof import('./components/DebounceForm/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -70,15 +73,22 @@ declare module 'vue' {
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    FeatureCard: typeof import('./components/home/FeatureCard.vue')['default']
+    FeatureSection: typeof import('./components/home/FeatureSection.vue')['default']
     GlobalLoading: typeof import('./components/GlobalLoading/index.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    Hero: typeof import('./components/home/Hero.vue')['default']
+    HeroSection: typeof import('./components/home/HeroSection.vue')['default']
     Optimized3DCarousel: typeof import('./components/Optimized3DCarousel/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SiteStats: typeof import('./components/SiteStats/SiteStats.vue')['default']
     TableSkeleton: typeof import('./components/Skeleton/TableSkeleton.vue')['default']
+    TechCarousel: typeof import('./components/home/TechCarousel.vue')['default']
     ThemeToggle: typeof import('./components/base/ThemeToggle.vue')['default']
     TypewriterEffect: typeof import('./components/base/TypewriterEffect.vue')['default']
+    VideoCard: typeof import('./components/home/VideoCard.vue')['default']
+    VideoSection: typeof import('./components/home/VideoSection.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

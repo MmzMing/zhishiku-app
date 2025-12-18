@@ -64,6 +64,19 @@ button {
   font-weight: 500;
 }
 
+/* 后台管理页面卡片无边框 */
+.admin-dashboard-page :deep(.el-card),
+.user-management-page :deep(.el-card),
+.video-management-page :deep(.el-card),
+.admin-layout .el-card {
+  border: none;
+  box-shadow: none;
+  
+  .el-card__header {
+    border-bottom: none;
+  }
+}
+
 /* 全局下拉框hover样式 - 适用于所有主题 */
 .el-dropdown-menu {
   .el-dropdown-menu__item {

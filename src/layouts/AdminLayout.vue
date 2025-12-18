@@ -249,7 +249,6 @@ async function handleLogout() {
 .admin-sidebar {
   width: 240px;
   background: var(--color-bg-primary);
-  border-right: 1px solid var(--color-border);
   transition: width 0.3s;
   flex-shrink: 0;
   display: flex;
@@ -265,7 +264,6 @@ async function handleLogout() {
     align-items: center;
     gap: 12px;
     padding: 0 20px;
-    border-bottom: 1px solid var(--color-border);
     
     .logo {
       width: 32px;
@@ -318,7 +316,6 @@ async function handleLogout() {
 .admin-header {
   height: 60px;
   background: var(--color-bg-primary);
-  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;

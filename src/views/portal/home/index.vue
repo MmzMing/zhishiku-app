@@ -332,7 +332,7 @@ function getCarouselItemStyle(index: number) {
   const rotateY = positionIndex * -20 // 每个项绕Y轴旋转一定角度
   const translateX = positionIndex * 200 // X轴偏移，适应更大的图片
   const translateZ = Math.abs(positionIndex) * -120 - 60 // Z轴偏移，离中心越远越靠后
-  const scale = 1 - Math.abs(positionIndex) * 0.15 // 缩放，离中心越远越小
+  const scale = positionIndex === 0 ? 1.25 : 1 - Math.abs(positionIndex) * 0.15 // 中间图片放大1.25倍
   const opacity = 1 - Math.abs(positionIndex) * 0.3 // 透明度，离中心越远越透明
   const zIndex = 10 - Math.abs(positionIndex) // 层级，离中心越远越低
   
@@ -348,7 +348,8 @@ function getCarouselItemStyle(index: number) {
     backgroundRepeat: 'no-repeat',
     transform: `translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
     opacity: opacity,
-    zIndex: zIndex
+    zIndex: zIndex,
+    border: positionIndex === 0 ? '4px solid #fff' : 'none'
   }
 }
 
@@ -364,22 +365,44 @@ function getIconSize(index: number) {
 function slideTo(index: number) {
   // 记录之前的索引
   const previousIndex = currentIndex.value
-  
-  // 更新当前索引和可见中心索引
-  currentIndex.value = index
-  visibleCenterIndex.value = index
-  
-  // 重置自动轮播定时器
-  resetAutoPlay()
-  
-  // 判断是否需要更新选择器偏移量
-  // 对于至少5个常驻的处理：当索引小于2或者大于等于总数量-3时，使用特殊的偏移计算
   const totalCategories = categories.length
-  const needsSpecialOffset = index < 2 || index >= totalCategories - 3
+  const difference = index - previousIndex
   
-  // 只有在不需要特殊处理的情况下才调用calculateSelectorOffset
-  // 特殊情况的偏移计算将在calculateSelectorOffset函数内部处理
-  calculateSelectorOffset()
+  // 处理循环跳转情况（最后一张到第一张或第一张到最后一张）
+  let actualDifference = difference
+  if (Math.abs(difference) > totalCategories / 2) {
+    // 选择较短的路径
+    actualDifference = difference > 0 ? difference - totalCategories : difference + totalCategories
+  }
+  
+  // 处理多页跳转情况
+  if (Math.abs(actualDifference) > 1) {
+    // 计算需要跳转的步数
+    const steps = Math.abs(actualDifference)
+    const direction = actualDifference > 0 ? 1 : -1
+    
+    // 逐页跳转，每步间隔10ms，极速翻页效果
+    let currentStep = 0
+    const interval = setInterval(() => {
+      currentIndex.value = (previousIndex + direction * currentStep + totalCategories) % totalCategories
+      currentStep++
+      
+      if (currentStep > steps) {
+        clearInterval(interval)
+        // 最终跳转到目标索引
+        currentIndex.value = index
+        visibleCenterIndex.value = index
+        resetAutoPlay()
+        calculateSelectorOffset()
+      }
+    }, 10)
+  } else {
+    // 单页跳转，直接更新
+    currentIndex.value = index
+    visibleCenterIndex.value = index
+    resetAutoPlay()
+    calculateSelectorOffset()
+  }
 }
 
 // 切换到轮播项中的分类
@@ -430,8 +453,7 @@ function calculateSelectorOffset() {
 // 自动轮播到下一个
 function autoPlayNext() {
   const nextIndex = currentIndex.value === categories.length - 1 ? 0 : currentIndex.value + 1
-  currentIndex.value = nextIndex
-  visibleCenterIndex.value = nextIndex
+  slideTo(nextIndex)
 }
 
 // 启动自动轮播
@@ -472,6 +494,25 @@ function handleMouseDown(event: MouseEvent) {
 function handleMouseMove(event: MouseEvent) {
   if (!isDragging.value) return
   currentX.value = event.clientX
+  
+  // 实时计算拖拽距离并更新轮播位置
+  const dragDistance = currentX.value - startX.value
+  const dragThreshold = 250 // 单页拖拽阈值
+  
+  // 处理左右滑动
+  if (dragDistance > dragThreshold) {
+    // 向右拖拽，显示前一张
+    const targetIndex = (currentIndex.value - 1 + totalCategories) % totalCategories
+    currentIndex.value = targetIndex
+    visibleCenterIndex.value = targetIndex
+    startX.value = currentX.value
+  } else if (dragDistance < -dragThreshold) {
+    // 向左拖拽，显示后一张
+    const targetIndex = (currentIndex.value + 1 + totalCategories) % totalCategories
+    currentIndex.value = targetIndex
+    visibleCenterIndex.value = targetIndex
+    startX.value = currentX.value
+  }
 }
 
 // 鼠标释放事件处理
@@ -479,24 +520,8 @@ function handleMouseUp() {
   if (!isDragging.value) return
   isDragging.value = false
   
-  // 计算拖拽距离
-  const dragDistance = currentX.value - startX.value
-  
-  // 如果拖拽距离超过阈值，则切换图片
-  if (Math.abs(dragDistance) > dragThreshold.value) {
-    if (dragDistance > 0) {
-      // 向右拖拽，显示前一张
-      const prevIndex = currentIndex.value === 0 ? categories.length - 1 : currentIndex.value - 1
-      slideTo(prevIndex)
-    } else {
-      // 向左拖拽，显示后一张
-      const nextIndex = currentIndex.value === categories.length - 1 ? 0 : currentIndex.value + 1
-      slideTo(nextIndex)
-    }
-  } else {
-    // 拖拽距离不足，恢复自动播放
-    startAutoPlay()
-  }
+  // 恢复自动播放
+  startAutoPlay()
 }
 
 // 监听当前索引变化，重新计算偏移
@@ -659,6 +684,11 @@ onUnMount(() => {
 
 <style scoped lang="scss">
 .portal-home {
+  /* 全局样式，确保所有元素无法被选中 */
+  * {
+    user-select: none;
+  }
+  
   /* 全局span样式，确保所有span元素无法被选中 */
   span {
     user-select: none;
