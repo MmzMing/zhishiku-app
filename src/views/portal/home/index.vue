@@ -724,7 +724,7 @@ onUnMount(() => {
   .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.158);
     z-index: 1;
   }
   
@@ -915,13 +915,14 @@ onUnMount(() => {
 }
 
 // 主内容区域
+
 .main-content {
   position: relative;
-  background: var(--color-bg-primary);
+  background: var(--color-bg-primary); // 亮色主题保持原有颜色
   z-index: 1; // 确保内容在背景图片之上
 }
 
-// 技术分类轮播区域
+  // 技术分类轮播区域
   .tech-carousel-section {
     padding: 60px 24px;
     background: var(--color-bg-primary);
@@ -1111,7 +1112,7 @@ onUnMount(() => {
   }
   
   .video-card {
-    background: var(--color-bg-primary);
+    background: var(--color-bg-secondary); /* 与博客卡片背景色保持一致 */
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
@@ -1447,6 +1448,42 @@ onUnMount(() => {
   .video-section .video-grid,
   .feature-section .feature-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+// 亮色主题的半透明磨砂玻璃效果（默认样式）
+.main-content {
+  /* 半透明毛玻璃效果 - 亮色主题 */
+  background: rgba(255, 255, 255, 0.8); // 半透白色背景
+  backdrop-filter: blur(12px); // 背景模糊效果
+  -webkit-backdrop-filter: blur(12px); // Safari浏览器兼容
+  border: 1px solid rgba(0, 0, 0, 0.1); // 细微边框增强层次感
+}
+
+// 两个section背景设置为透明
+.tech-carousel-section,
+.blog-section {
+  background: transparent !important;
+}
+
+.category-selector {
+  &::before {
+    background: linear-gradient(to right, transparent, transparent) !important;
+  }
+  
+  &::after {
+    background: linear-gradient(to left, transparent, transparent) !important;
+  }
+}
+
+// 暗色主题下的样式（保持不变）
+.theme-dark {
+  .main-content {
+    /* 半透明毛玻璃效果 */
+    background: rgba(51, 51, 51, 0.8); // 半透深灰色背景
+    backdrop-filter: blur(12px); // 背景模糊效果
+    -webkit-backdrop-filter: blur(12px); // Safari浏览器兼容
+    border: 1px solid rgba(255, 255, 255, 0.1); // 细微边框增强层次感
   }
 }
 </style>

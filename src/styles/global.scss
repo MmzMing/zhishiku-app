@@ -64,6 +64,69 @@ button {
   font-weight: 500;
 }
 
+/* 全局下拉框hover样式 - 适用于所有主题 */
+.el-dropdown-menu {
+  .el-dropdown-menu__item {
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    
+    &:hover {
+      border-left: none;
+      padding-left: var(--el-dropdown-menu-item-padding-horizontal, 16px);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background-color: var(--el-color-primary);
+        z-index: 1;
+      }
+    }
+    
+    /* 确保鼠标移出后不保持选中状态 - 适用于所有主题 */
+    &:not(:hover):focus {
+      background-color: transparent;
+      color: var(--el-text-color-regular);
+      box-shadow: none;
+    }
+  }
+}
+
+.el-select-dropdown {
+  .el-select-dropdown__item {
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    
+    &:hover {
+      border-left: none;
+      padding-left: var(--el-select-dropdown-item-padding-horizontal, 16px);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background-color: var(--el-color-primary);
+        z-index: 1;
+      }
+    }
+    
+    /* 确保鼠标移出后不保持选中状态 - 适用于所有主题 */
+    &:not(:hover):focus {
+      background-color: transparent;
+      color: var(--el-text-color-regular);
+      box-shadow: none;
+    }
+  }
+}
+
 /* 普通按钮悬停效果 */
 .el-button:hover:not(.is-disabled) {
   border-color: var(--color-brand-400);
@@ -721,14 +784,38 @@ html[data-theme="dark"] {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
     
     .el-dropdown-menu__item {
+    color: var(--el-text-color-regular);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    
+    /* 通用hover效果 - 使用伪元素实现左侧高亮条 */
+    &:hover {
+      background-color: #3d3d3d;
+      color: var(--el-color-primary);
+      border-left: none;
+      padding-left: var(--el-dropdown-menu-item-padding-horizontal, 16px);
+    }
+    
+    /* 为hover状态添加左侧指示器，但不改变元素尺寸 */
+    &:hover::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 3px;
+      background-color: var(--el-color-primary);
+      z-index: 1;
+    }
+    
+    /* 确保鼠标移出后不保持选中状态 */
+    &:not(:hover):focus {
+      background-color: transparent;
       color: var(--el-text-color-regular);
-      transition: all 0.2s ease;
-      
-      &:hover {
-        background-color: #3d3d3d;
-        color: var(--el-color-primary);
-        border-left: 3px solid var(--el-color-primary);
-      }
+      box-shadow: none;
+    }
     }
   }
   
@@ -742,11 +829,33 @@ html[data-theme="dark"] {
   .el-select-dropdown__item {
     color: var(--el-text-color-regular);
     transition: all 0.2s ease;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
     
     &:hover {
       background-color: #3d3d3d;
       color: var(--el-color-primary);
-      border-left: 3px solid var(--el-color-primary);
+      border-left: none;
+      padding-left: var(--el-select-dropdown-item-padding-horizontal, 16px);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background-color: var(--el-color-primary);
+        z-index: 1;
+      }
+    }
+    
+    /* 确保鼠标移出后不保持选中状态 */
+    &:not(:hover):focus {
+      background-color: transparent;
+      color: var(--el-text-color-regular);
+      box-shadow: none;
     }
     
     &.selected {

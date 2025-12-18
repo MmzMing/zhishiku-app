@@ -88,8 +88,8 @@
   --color-link-hover: hsl(210, 75%, 40%);
   
   // 语义化颜色
-  --color-bg-primary: var(--color-white);
-  --color-bg-secondary: var(--color-neutral-50);
+  --color-bg-primary: var(--color-neutral-50);
+  --color-bg-secondary: #E9F0F5;
   --color-bg-tertiary: var(--color-neutral-100);
   
   --color-text-primary: var(--color-neutral-900);
@@ -98,7 +98,7 @@
   --color-text-disabled: var(--color-neutral-400);
   --color-text-placeholder: var(--color-neutral-400);
   
-  --color-border: var(--color-neutral-200);
+  --color-border: #000000;
   --color-border-light: var(--color-neutral-100);
   --color-border-dark: var(--color-neutral-300);
   

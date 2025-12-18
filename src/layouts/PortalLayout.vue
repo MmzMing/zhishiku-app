@@ -1,5 +1,7 @@
 <template>
   <div class="portal-layout" :class="{ 'is-scrolled': isScrolled }">
+    <!-- 背景图层 -->
+    <div class="portal-background"></div>
     <!-- 顶部导航栏 -->
     <header class="portal-header">
       <div class="header-container">
@@ -277,6 +279,23 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   background: var(--color-bg-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景图层样式 */
+.portal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  background-image: url('/picture/preview.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.8);
+  transform: scale(1.05);
 }
 
 .portal-header {
@@ -287,6 +306,8 @@ onUnmounted(() => {
   z-index: 1000;
   background: var(--color-bg-primary);
   transition: all 0.3s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   
   .is-scrolled & {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -397,6 +418,16 @@ onUnmounted(() => {
   flex: 1;
   margin-top: 64px;
   min-height: calc(100vh - 64px - 300px);
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  // 暗黑主题下的背景样式
+  :global(.dark-theme) & {
+    background: rgba(86, 86, 86, 0.3); // #565656 with 30% opacity
+  }
 }
 
 .portal-footer {
@@ -404,6 +435,8 @@ onUnmounted(() => {
   border-top: 1px solid var(--color-border);
   position: relative;
   z-index: 100; // 确保在fixed背景图片之上显示
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   
   .footer-container {
     max-width: 1400px;

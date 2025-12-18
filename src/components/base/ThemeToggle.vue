@@ -147,21 +147,47 @@ const handleColorChange = (color: string | null) => {
   }
 }
 
-:deep(.theme-menu) {
+/* 自定义主题菜单样式 */
+.theme-menu {
   width: 180px;
   padding: 8px;
+  box-sizing: border-box;
+}
+
+/* 使用/deep/选择器覆盖Element Plus默认样式 */
+:deep(.el-dropdown-menu) {
+  width: 180px;
+  padding: 8px;
+  box-sizing: border-box;
   
   .el-dropdown-menu__item {
-    border-radius: 4px;
-    margin: 2px 0;
-    
-    &.active {
-      background-color: var(--el-color-primary-light-9);
-      color: var(--el-color-primary);
+      border-radius: 4px;
+      margin: 2px 0;
+      box-sizing: border-box;
+      position: relative;
+      /* 移除可能导致宽度变化的属性 */
       
-      &:hover {
-        background-color: var(--el-color-primary-light-8);
+      /* 确保鼠标移出后不保持选中状态 */
+      &:not(:hover):focus {
+        background-color: transparent;
+        color: var(--el-text-color-regular);
+        box-shadow: none;
       }
+      
+      &.active {
+        background-color: var(--el-color-primary-light-9);
+        color: var(--el-color-primary);
+        
+        &:hover {
+          background-color: var(--el-color-primary-light-8);
+      }
+    }
+    
+    /* 覆盖暗黑主题下的hover效果 */
+    &:hover {
+      border-left: none !important; /* 移除左侧边框 */
+      padding-left: var(--el-dropdown-menu-item-padding-horizontal, 16px) !important;
+      /* 改为添加左侧内边距而不是边框，避免宽度变化 */
     }
     
     .theme-option {
@@ -194,6 +220,15 @@ const handleColorChange = (color: string | null) => {
       font-size: 14px;
       color: var(--color-text-secondary);
     }
+  }
+}
+
+/* 暗黑主题下的特定样式 */
+[data-theme="dark"] {
+  :deep(.el-dropdown-menu__item:hover) {
+    border-left: none !important;
+    padding-left: var(--el-dropdown-menu-item-padding-horizontal, 16px) !important;
+    background-color: #3d3d3d;
   }
 }
 </style>
